@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Listado de Variedades</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Variedad</th>
+            <th scope="col">Activa</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for variety in varieties %}
+        <tr>
+            <th scope="row">{{ loop.index }}</th>
+            <td>{{ variety.name }}</td>
+            <td>{{ variety.is_active }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

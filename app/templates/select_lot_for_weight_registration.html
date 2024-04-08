@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Select a Lot for Weight Registration</h2>
+    {% if lots %}
+    <ul class="list-group">
+        {% for lot in lots %}
+        <li class="list-group-item">
+            Lot #{{ '%03d' % lot.lot_number }} - {{ lot.variety.name }} - <a href="{{ url_for('register_full_truck_weight', lot_id=lot.id) }}">Register Weight</a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No lots with weight equal to 0 found.</p>
+    {% endif %}
+</div>
+{% endblock %}
