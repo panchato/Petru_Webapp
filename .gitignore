@@ -60,7 +60,6 @@ cover/
 
 # Flask stuff:
 instance/
-static/
 migrations/
 .webassets-cache
 
