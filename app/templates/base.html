@@ -17,6 +17,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    {% if current_user.is_authenticated %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Clientes
@@ -26,6 +27,8 @@
                                 <li><a class="dropdown-item" href="{{ url_for('list_clients') }}">Listado de Clientes</a></li>
                             </ul>
                     </li>
+                    {% endif %}
+                    {% if current_user.is_authenticated %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Productores
@@ -35,6 +38,8 @@
                                 <li><a class="dropdown-item" href="{{ url_for('list_growers') }}">Listado de Productores</a></li>
                             </ul>
                     </li>
+                    {% endif %}
+                    {% if current_user.is_authenticated %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                            Variedades
@@ -44,6 +49,8 @@
                                 <li><a class="dropdown-item" href="{{ url_for('list_varieties') }}">Listado de Variedades</a></li>
                             </ul>
                     </li>
+                    {% endif %}
+                    {% if current_user.is_authenticated %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                            Envases MP
@@ -53,6 +60,8 @@
                                 <li><a class="dropdown-item" href="{{ url_for('list_raw_material_packagings') }}">Listado de Envases MP</a></li>
                             </ul>
                     </li>
+                    {% endif %}
+                    {% if current_user.is_authenticated %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Recepciones y Lotes
@@ -62,6 +71,8 @@
                                 <li><a class="dropdown-item" href="{{ url_for('select_lot_for_weight_registration') }}">Lotes por Pesar</a></li>
                             </ul>
                     </li>
+                    {% endif %}
+                    {% if current_user.is_authenticated %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             QC Lotes
@@ -71,6 +82,7 @@
                                 <li><a class="dropdown-item" href="{{ url_for('lot_qc_reports') }}">Listado de QC Lotes</a></li>
                             </ul>
                     </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
