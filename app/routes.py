@@ -17,6 +17,7 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
+        flash('Usuario ya se encuentra logeado.')
         return redirect(url_for('index'))
     
     form = LoginForm()
@@ -28,14 +29,14 @@ def login():
             next_page = request.args.get('next')
             return redirect(next_page or url_for('index'))
         else:
-            flash('Invalid email or password')
-    return render_template('login.html', title='Sign In', form=form)
+            flash('Correo o contraseña inválidos.')
+    return render_template('login.html', form=form)
 
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
-    flash('You have been logged out.')
+    flash('Se ha desconectado exitosamente.')
     return redirect(url_for('index'))
 
 @app.route('/add_client', methods=['GET', 'POST'])
@@ -46,7 +47,7 @@ def add_client():
             name=form.name.data,
             tax_id=form.tax_id.data,
             address=form.address.data,
-            comuna=form.comuna.data)
+            comuna=form.comuna.data) # type: ignore
         db.session.add(client)
         db.session.commit()
         flash('Client added successfully!', 'success')
@@ -65,7 +66,7 @@ def add_grower():
         grower = Grower(
             name=form.name.data,
             tax_id=form.tax_id.data,
-            csg_code=form.csg_code.data)
+            csg_code=form.csg_code.data) # type: ignore
         db.session.add(grower)
         db.session.commit()
         flash('Grower added successfully!')
@@ -82,7 +83,7 @@ def add_variety():
     form = AddVarietyForm()
     if form.validate_on_submit():
         variety = Variety(
-            name=form.name.data)
+            name=form.name.data) # type: ignore
         db.session.add(variety)
         db.session.commit()
         flash('Variety added successfully!')
@@ -100,7 +101,7 @@ def add_raw_material_packaging():
     if form.validate_on_submit():
         rmp = RawMaterialPackaging(
             name=form.name.data,
-            tare=form.tare.data)
+            tare=form.tare.data) # type: ignore
         db.session.add(rmp)
         db.session.commit()
         flash('Envase agregado correctamente!')
@@ -122,7 +123,7 @@ def add_raw_material_reception():
             time=form.time.data,
             truck_plate=form.truck_plate.data,
             trucker_name=form.trucker_name.data
-        )
+        ) # type: ignore
 
         selected_grower = Grower.query.get(form.grower_id.data)
         selected_client = Client.query.get(form.client_id.data)
@@ -155,7 +156,7 @@ def create_lot(reception_id):
                 rawmaterialpackaging_id=form.rawmaterialpackaging_id.data,
                 packagings_quantity=form.packagings_quantity.data,
                 lot_number=form.lot_number.data
-            )
+            ) # type: ignore
             db.session.add(lot)
             db.session.commit()
             flash('Lot created successfully.', 'success')
@@ -173,7 +174,7 @@ def full_truck_weight(lot_id):
             loaded_truck_weight=form.loaded_truck_weight.data,
             empty_truck_weight=form.empty_truck_weight.data,
             lot_id=lot_id
-        )
+        ) # type: ignore
         db.session.add(full_truck_weight)
         db.session.commit()
 
@@ -202,10 +203,10 @@ def register_full_truck_weight(lot_id):
             loaded_truck_weight=form.loaded_truck_weight.data,
             empty_truck_weight=form.empty_truck_weight.data,
             lot_id=lot_id
-        )
+        ) # type: ignore
         db.session.add(full_truck_weight)
         
-        packaging_tare = RawMaterialPackaging.query.get(lot.rawmaterialpackaging_id).tare
+        packaging_tare = RawMaterialPackaging.query.get(lot.rawmaterialpackaging_id).tare # type: ignore
 
         lot.net_weight = (
             full_truck_weight.loaded_truck_weight - 
@@ -240,7 +241,7 @@ def generate_qr():
     # _external=True generates an absolute URL, including the domain
     url = url_for('lot_net_details', reception_id=reception_id, _external=True)
     
-    qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=4)
+    qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=4) # type: ignore
     qr.add_data(url)
     qr.make(fit=True)
 
@@ -288,7 +289,7 @@ def create_lot_qc():
             light_amber=form.light_amber.data,
             amber=form.amber.data,
             yellow=form.yellow.data
-        )
+        ) # type: ignore
 
         def save_image(uploaded_file):
             if uploaded_file:
@@ -325,7 +326,7 @@ def create_lot_qc():
     else:
         for fieldName, errorMessages in form.errors.items():
             for err in errorMessages:
-                flash(f'Error in {fieldName}: {err}', 'error')
+                flash(f'{err}', 'error')
 
     return render_template('create_lot_qc.html', form=form)
 

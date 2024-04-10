@@ -30,8 +30,7 @@ def create_admin_user():
                 is_active=True,
                 user_type='admin',
                 user_area='all',
-                # client_id can be omitted if not applicable for admin users
-            )
+            ) # type: ignore
             admin.password = admin_password
 
             try:
