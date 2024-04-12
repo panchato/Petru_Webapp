@@ -14,7 +14,7 @@ class AddUserForm(FlaskForm):
     name = StringField('Nombre', validators=[DataRequired(), Length(min=2, max=64)])
     last_name = StringField('Apellido', validators=[DataRequired(), Length(min=2, max=64)])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    phone_number = StringField('Celular', validators=[DataRequired(), Length(min=10, max=10)])
+    phone_number = StringField('Celular', validators=[DataRequired(), Length(min=9, max=9)])
     password = PasswordField('Contraseña', validators=[DataRequired()])
     submit = SubmitField('Agregar Usuario')
 
