@@ -1,8 +1,8 @@
 import qrcode
 import os
 import uuid
-from flask import render_template, flash, redirect, url_for, request, send_file
-from flask_login import login_user, logout_user, current_user, login_required
+from flask import render_template, redirect, url_for, flash, send_file, request
+from flask_login import login_user, logout_user, login_required, current_user
 from app.forms import LoginForm, AddClientForm, AddGrowerForm, AddVarietyForm, AddRawMaterialPackagingForm, RawMaterialReceptionForm, LotForm, FullTruckWeightForm, LotQCForm
 from app.models import User, Client, Grower, Variety, RawMaterialPackaging, RawMaterialReception, Lot, FullTruckWeight, LotQC
 from app import app, db, bcrypt
@@ -27,8 +27,15 @@ def login():
             login_user(user)
             next_page = request.args.get('next')
             return redirect(next_page or url_for('index'))
-        else:
-            flash('Correo o contraseña inválidos.')
+        
+        if user is None:
+            flash('Usuario incorrecto.')
+            return redirect(url_for('login'))
+        
+        if not bcrypt.check_password_hash(user.password_hash, form.password.data):
+            flash('Contraseña incorrecta.')
+            return redirect(url_for('login'))
+
     return render_template('login.html', form=form)
 
 @app.route('/logout')

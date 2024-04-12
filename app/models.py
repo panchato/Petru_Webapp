@@ -1,10 +1,10 @@
 from flask_login import UserMixin
 from flask_bcrypt import bcrypt
 from datetime import datetime, date
-from werkzeug.security import generate_password_hash, check_password_hash
 from flask_admin.contrib.sqla import ModelView
 from app import db, login_manager, admin
 from app.basemodel import BaseModel
+
 class User(UserMixin, BaseModel):
     __tablename__ = 'users'
     name = db.Column(db.String(64), nullable=False)
