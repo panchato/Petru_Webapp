@@ -10,7 +10,6 @@ area_user = db.Table('area_user',
     db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True)
 )
 
-# Association tables for many-to-many relationships
 role_user = db.Table('role_user',
     db.Column('role_id', db.Integer, db.ForeignKey('roles.id'), primary_key=True),
     db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True)
