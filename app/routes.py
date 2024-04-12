@@ -42,8 +42,8 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('Se ha desconectado exitosamente.')
-    return redirect(url_for('index'))
+    flash('Usuario se ha desconectado exitosamente.')
+    return redirect(url_for('login'))
 
 @app.route('/add_client', methods=['GET', 'POST'])
 def add_client():
@@ -56,8 +56,8 @@ def add_client():
             comuna=form.comuna.data) # type: ignore
         db.session.add(client)
         db.session.commit()
-        flash('Client added successfully!', 'success')
-        return redirect(url_for('index'))  # Redirect to the index page or wherever appropriate
+        flash('Cliente agregado correctamente.')
+        return redirect(url_for('list_clients'))
     return render_template('add_client.html', title='Add Client', form=form)
 
 @app.route('/list_clients')
@@ -75,7 +75,7 @@ def add_grower():
             csg_code=form.csg_code.data) # type: ignore
         db.session.add(grower)
         db.session.commit()
-        flash('Grower added successfully!')
+        flash('Productor agregado correctamente.')
         return redirect(url_for('list_growers'))
     return render_template('add_grower.html', form=form)
 
@@ -92,7 +92,7 @@ def add_variety():
             name=form.name.data) # type: ignore
         db.session.add(variety)
         db.session.commit()
-        flash('Variety added successfully!')
+        flash('Variedad agregada correctamente.')
         return redirect(url_for('list_varieties'))
     return render_template('add_variety.html', form=form)
 
@@ -110,7 +110,7 @@ def add_raw_material_packaging():
             tare=form.tare.data) # type: ignore
         db.session.add(rmp)
         db.session.commit()
-        flash('Envase agregado correctamente!')
+        flash('Envase agregado correctamente.')
         return redirect(url_for('list_raw_material_packagings'))
     return render_template('add_raw_material_packaging.html', form=form)
 

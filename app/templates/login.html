@@ -1,15 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>Login Page</h2>
+
 <form method="POST" action="">
     {{ form.hidden_tag() }}
     <div class="alert alert-danger" role="alert">
     {% with messages = get_flashed_messages() %}
     {% if messages %}
         {{ messages[0] }}
+    {% endif %}
+    {% endwith %}
     </div>
-        {% endif %}
-        {% endwith %}
     <div class="form-group">
         {{ form.email.label }}
         {{ form.email(class="form-control") }}

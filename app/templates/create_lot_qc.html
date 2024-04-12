@@ -4,9 +4,9 @@
     $(document).ready(function() {
       {% with messages = get_flashed_messages() %}
         {% if messages %}
-          var errorMessage = "{{ messages[0] }}"; // Taking the first message for simplicity
-          $('.modal-body').text(errorMessage); // Set the error message
-          $('#errorModal').modal('show'); // Show the modal
+          var errorMessage = "{{ messages[0] }}";
+          $('.modal-body').text(errorMessage);
+          $('#errorModal').modal('show');
         {% endif %}
       {% endwith %}
     });
