@@ -1,5 +1,4 @@
 from flask_wtf import FlaskForm
-
 from wtforms import StringField, FloatField, IntegerField, PasswordField, SelectField, DateField, TimeField, SubmitField, HiddenField, RadioField
 from wtforms.validators import DataRequired, InputRequired, ValidationError, Length, Email
 from flask_wtf.file import FileField, FileAllowed, FileRequired
@@ -111,6 +110,6 @@ class LotQCForm(FlaskForm):
         self.lot_id.choices = [(l.id, l.lot_number) for l in Lot.query.all()]
 
     def validate_shelled_weight(self, field):
-        total_color_weight = self.extra_light.data + self.light.data + self.light_amber.data + self.amber.data
+        total_color_weight = self.extra_light.data + self.light.data + self.light_amber.data + self.amber.data # type: ignore
         if field.data != total_color_weight:
             raise ValidationError('El peso de pulpa debe ser igual a la suma de los pesos de los colores.')

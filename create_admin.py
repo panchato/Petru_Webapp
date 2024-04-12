@@ -1,6 +1,6 @@
 import logging
 from getpass import getpass
-from app import app, db
+from app import app, db, bcrypt
 from app.models import User
 
 logging.basicConfig(level=logging.INFO)
@@ -14,7 +14,7 @@ def create_admin_user():
     with app.app_context():
         admin_email = input("Enter admin email: ")
         admin_password = getpass("Enter admin password: ")
-
+        password_hash = bcrypt.generate_password_hash(admin_password).decode('utf-8')
         if not User.query.filter_by(email=admin_email).first():
             admin_name = input("Enter admin name: ")
             admin_last_name = input("Enter admin last name: ")
@@ -31,7 +31,7 @@ def create_admin_user():
                 user_type='admin',
                 user_area='all',
             ) # type: ignore
-            admin.password = admin_password
+            admin.password_hash = password_hash
 
             try:
                 db.session.add(admin)

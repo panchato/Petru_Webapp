@@ -1,11 +1,11 @@
 import qrcode
 import os
 import uuid
-from flask import render_template, flash, redirect, url_for, request, session, jsonify, send_file
+from flask import render_template, flash, redirect, url_for, request, send_file
 from flask_login import login_user, logout_user, current_user, login_required
 from app.forms import LoginForm, AddClientForm, AddGrowerForm, AddVarietyForm, AddRawMaterialPackagingForm, RawMaterialReceptionForm, LotForm, FullTruckWeightForm, LotQCForm
 from app.models import User, Client, Grower, Variety, RawMaterialPackaging, RawMaterialReception, Lot, FullTruckWeight, LotQC
-from app import app, db
+from app import app, db, bcrypt
 from io import BytesIO
 from datetime import datetime
 from werkzeug.utils import secure_filename
@@ -17,15 +17,14 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        flash('Usuario ya se encuentra logeado.')
+        flash('Usuario ya se encuentra conectado.')
         return redirect(url_for('index'))
     
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user is not None and user.verify_password(form.password.data):
+        if user is not None and bcrypt.check_password_hash(user.password_hash, form.password.data):
             login_user(user)
-            session.permanent = True
             next_page = request.args.get('next')
             return redirect(next_page or url_for('index'))
         else:

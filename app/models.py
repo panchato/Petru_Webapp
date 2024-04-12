@@ -1,11 +1,10 @@
-from email.policy import default
-from lib2to3.pgen2.pgen import DFAState
 from flask_login import UserMixin
+from flask_bcrypt import bcrypt
 from datetime import datetime, date
-from app import db, login_manager
-from app.basemodel import BaseModel
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from flask_admin.contrib.sqla import ModelView
+from app import db, login_manager, admin
+from app.basemodel import BaseModel
 class User(UserMixin, BaseModel):
     __tablename__ = 'users'
     name = db.Column(db.String(64), nullable=False)
@@ -19,16 +18,10 @@ class User(UserMixin, BaseModel):
     is_active = db.Column(db.Boolean, default=True, nullable=False)
     is_external = db.Column(db.Boolean, default=False, nullable=False)
 
-    @property
-    def password(self):
-        raise AttributeError('password is not a readable attribute')
+class UserView(ModelView):
+    column_exclude_list = ('password_hash', 'created_at', 'updated_at')
 
-    @password.setter
-    def password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def verify_password(self, password):
-        return check_password_hash(self.password_hash, password)
+admin.add_view(UserView(User, db.session))
 
 @login_manager.user_loader
 def load_user(user_id):
