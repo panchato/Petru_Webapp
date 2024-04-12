@@ -4,7 +4,7 @@
 
 <form method="POST" action="">
     {{ form.hidden_tag() }}
-    <div class="alert alert-danger" role="alert">
+    <div class="alert alert-success" role="alert">
     {% with messages = get_flashed_messages() %}
     {% if messages %}
         {{ messages[0] }}
