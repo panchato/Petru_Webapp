@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, FloatField, IntegerField, PasswordField, SelectField, DateField, TimeField, SubmitField, HiddenField, RadioField
+from wtforms import StringField, FloatField, IntegerField, PasswordField, SelectField, DateField, TimeField, SubmitField, HiddenField, RadioField, BooleanField
 from wtforms.validators import DataRequired, InputRequired, ValidationError, Length, Email
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from app.models import Client, Grower, Variety, RawMaterialPackaging, Lot
@@ -9,6 +9,14 @@ class LoginForm(FlaskForm):
     password = PasswordField('Contraseña', validators=[DataRequired()])
 
     submit = SubmitField('Ingresar')
+
+class AddUserForm(FlaskForm):
+    name = StringField('Nombre', validators=[DataRequired(), Length(min=2, max=64)])
+    last_name = StringField('Apellido', validators=[DataRequired(), Length(min=2, max=64)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    phone_number = StringField('Celular', validators=[DataRequired(), Length(min=10, max=10)])
+    password = PasswordField('Contraseña', validators=[DataRequired()])
+    submit = SubmitField('Agregar Usuario')
 
 class AddClientForm(FlaskForm):
     name = StringField('Razón Social', validators=[DataRequired()])

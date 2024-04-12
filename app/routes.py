@@ -3,7 +3,7 @@ import os
 import uuid
 from flask import render_template, redirect, url_for, flash, send_file, request
 from flask_login import login_user, logout_user, login_required, current_user
-from app.forms import LoginForm, AddClientForm, AddGrowerForm, AddVarietyForm, AddRawMaterialPackagingForm, RawMaterialReceptionForm, LotForm, FullTruckWeightForm, LotQCForm
+from app.forms import LoginForm, AddUserForm, AddClientForm, AddGrowerForm, AddVarietyForm, AddRawMaterialPackagingForm, RawMaterialReceptionForm, LotForm, FullTruckWeightForm, LotQCForm
 from app.models import User, Client, Grower, Variety, RawMaterialPackaging, RawMaterialReception, Lot, FullTruckWeight, LotQC
 from app import app, db, bcrypt
 from io import BytesIO
@@ -44,6 +44,28 @@ def logout():
     logout_user()
     flash('Usuario se ha desconectado exitosamente.')
     return redirect(url_for('login'))
+
+@app.route('/add_user', methods=['GET', 'POST'])
+def add_user():
+    form = AddUserForm()
+    if form.validate_on_submit():
+        user = User(
+            name=form.name.data,
+            last_name=form.last_name.data,
+            email=form.email.data,
+            phone_number=form.phone_number.data,
+            password_hash=bcrypt.generate_password_hash(form.password.data),
+        ) # type: ignore
+        db.session.add(user)
+        db.session.commit()
+        flash('User has been added!', 'success')
+        return redirect(url_for('index'))
+    return render_template('add_user.html', title='Add User', form=form)
+
+@app.route('/list_users')
+def list_users():
+    users = User.query.all()  # Fetch all users from the database
+    return render_template('list_users.html', users=users)
 
 @app.route('/add_client', methods=['GET', 'POST'])
 def add_client():

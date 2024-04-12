@@ -58,7 +58,7 @@ class Client(BaseModel):
     comuna = db.Column(db.String(64), nullable=False)
     is_active = db.Column(db.Boolean, default=True, nullable=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 class Grower(BaseModel):
@@ -68,7 +68,7 @@ class Grower(BaseModel):
     csg_code = db.Column(db.String(10), default=0, nullable=False)
     is_active = db.Column(db.Boolean, default=True, nullable=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 class Variety(BaseModel):
@@ -77,7 +77,7 @@ class Variety(BaseModel):
     is_active = db.Column(db.Boolean, default=True, nullable=False)
     lots = db.relationship('Lot', backref='variety', lazy='dynamic')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 class RawMaterialPackaging(BaseModel):
@@ -87,7 +87,7 @@ class RawMaterialPackaging(BaseModel):
     is_active = db.Column(db.Boolean, default=True, nullable=False)
     lots = db.relationship('Lot', backref='raw_material_packaging', lazy='dynamic')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 # Association tables for many-to-many relationships

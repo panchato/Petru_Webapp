@@ -20,6 +20,17 @@
                     {% if current_user.is_authenticated %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Usuarios
+                        </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ url_for('add_user') }}">Agregar Nuevo Cliente</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('list_users') }}">Listado de Clientes</a></li>
+                            </ul>
+                    </li>
+                    {% endif %}
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Clientes
                         </a>
                             <ul class="dropdown-menu">
