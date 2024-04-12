@@ -19,17 +19,13 @@ def create_admin_user():
             admin_name = input("Enter admin name: ")
             admin_last_name = input("Enter admin last name: ")
             admin_phone = input("Enter admin phone number: ")
-            admin_position = input("Enter admin position: ")
 
             admin = User(
                 name=admin_name,
                 last_name=admin_last_name,
                 email=admin_email,
                 phone_number=admin_phone,
-                position=admin_position,
                 is_active=True,
-                user_type='admin',
-                user_area='all',
             ) # type: ignore
             admin.password_hash = password_hash
 

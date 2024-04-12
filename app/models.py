@@ -1,9 +1,20 @@
 from flask_login import UserMixin
-from flask_bcrypt import bcrypt
 from datetime import datetime, date
 from flask_admin.contrib.sqla import ModelView
 from app import db, login_manager, admin
 from app.basemodel import BaseModel
+
+# Association tables for many-to-many relationships
+area_user = db.Table('area_user',
+    db.Column('area_id', db.Integer, db.ForeignKey('areas.id'), primary_key=True),
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True)
+)
+
+# Association tables for many-to-many relationships
+role_user = db.Table('role_user',
+    db.Column('role_id', db.Integer, db.ForeignKey('roles.id'), primary_key=True),
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True)
+)
 
 class User(UserMixin, BaseModel):
     __tablename__ = 'users'
@@ -12,11 +23,14 @@ class User(UserMixin, BaseModel):
     email = db.Column(db.String(64), nullable=False)
     phone_number = db.Column(db.String(10), nullable=False)
     password_hash = db.Column(db.String(128))
-    position = db.Column(db.String(64), nullable=True)
-    user_type = db.Column(db.String(64), nullable=False)
-    user_area = db.Column(db.String(64), nullable=False)
     is_active = db.Column(db.Boolean, default=True, nullable=False)
     is_external = db.Column(db.Boolean, default=False, nullable=False)
+
+    roles = db.relationship('Role', secondary=role_user, backref=db.backref('users', lazy='dynamic'))
+    areas = db.relationship('Area', secondary=area_user, backref=db.backref('users', lazy='dynamic'))
+
+    def __str__(self):
+        return self.email
 
 class UserView(ModelView):
     column_exclude_list = ('password_hash', 'created_at', 'updated_at')
@@ -27,6 +41,16 @@ admin.add_view(UserView(User, db.session))
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+class Role(BaseModel):
+    __tablename__ = 'roles'
+    name = db.Column(db.String(64), nullable=False)
+    description = db.Column(db.String(255), nullable=False)
+
+class Area(BaseModel):
+    __tablename__ = 'areas'
+    name = db.Column(db.String(64), nullable=False)
+    description = db.Column(db.String(255), nullable=False)
+
 class Client(BaseModel):
     __tablename__ = 'clients'
     name = db.Column(db.String(128), nullable=False)
@@ -35,6 +59,9 @@ class Client(BaseModel):
     comuna = db.Column(db.String(64), nullable=False)
     is_active = db.Column(db.Boolean, default=True, nullable=False)
 
+    def __unicode__(self):
+        return self.name
+
 class Grower(BaseModel):
     __tablename__ = 'growers'
     name = db.Column(db.String(128), nullable=False)
@@ -42,11 +69,17 @@ class Grower(BaseModel):
     csg_code = db.Column(db.String(10), default=0, nullable=False)
     is_active = db.Column(db.Boolean, default=True, nullable=False)
 
+    def __unicode__(self):
+        return self.name
+
 class Variety(BaseModel):
     __tablename__ = 'varieties'
     name = db.Column(db.String(64), nullable=False, unique=True)
     is_active = db.Column(db.Boolean, default=True, nullable=False)
     lots = db.relationship('Lot', backref='variety', lazy='dynamic')
+
+    def __unicode__(self):
+        return self.name
 
 class RawMaterialPackaging(BaseModel):
     __tablename__ = 'rawmaterialpackagings'
@@ -54,6 +87,9 @@ class RawMaterialPackaging(BaseModel):
     tare = db.Column(db.Float, nullable=False)
     is_active = db.Column(db.Boolean, default=True, nullable=False)
     lots = db.relationship('Lot', backref='raw_material_packaging', lazy='dynamic')
+
+    def __unicode__(self):
+        return self.name
 
 # Association tables for many-to-many relationships
 rawmaterialreception_grower = db.Table('rawmaterialreception_grower',
