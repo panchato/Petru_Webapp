@@ -3,8 +3,8 @@ import os
 import uuid
 from flask import render_template, redirect, url_for, flash, send_file, request
 from flask_login import login_user, logout_user, login_required, current_user
-from app.forms import LoginForm, AddUserForm, AddClientForm, AddGrowerForm, AddVarietyForm, AddRawMaterialPackagingForm, RawMaterialReceptionForm, LotForm, FullTruckWeightForm, LotQCForm
-from app.models import User, Client, Grower, Variety, RawMaterialPackaging, RawMaterialReception, Lot, FullTruckWeight, LotQC
+from app.forms import LoginForm, AddUserForm, AddRoleForm, AddAreaForm, AddClientForm, AddGrowerForm, AddVarietyForm, AddRawMaterialPackagingForm, RawMaterialReceptionForm, LotForm, FullTruckWeightForm, LotQCForm
+from app.models import User, Role, Area, Client, Grower, Variety, RawMaterialPackaging, RawMaterialReception, Lot, FullTruckWeight, LotQC
 from app import app, db, bcrypt
 from io import BytesIO
 from datetime import datetime
@@ -66,6 +66,38 @@ def add_user():
 def list_users():
     users = User.query.all()  # Fetch all users from the database
     return render_template('list_users.html', users=users)
+
+@app.route('/add_role', methods=['GET', 'POST'])
+def add_role():
+    form = AddRoleForm()
+    if form.validate_on_submit():
+        role = Role(name=form.name.data, description=form.description.data) # type: ignore
+        db.session.add(role)
+        db.session.commit()
+        flash('Role added successfully!')
+        return redirect(url_for('list_roles'))
+    return render_template('add_role.html', form=form)
+
+@app.route('/list_roles')
+def list_roles():
+    roles = Role.query.all()
+    return render_template('list_roles.html', roles=roles)
+
+@app.route('/add_area', methods=['GET', 'POST'])
+def add_area():
+    form = AddAreaForm()
+    if form.validate_on_submit():
+        area = Area(name=form.name.data, description=form.description.data) # type: ignore
+        db.session.add(area)
+        db.session.commit()
+        flash('Area added successfully!')
+        return redirect(url_for('list_areas'))
+    return render_template('add_area.html', form=form)
+
+@app.route('/list_areas')
+def list_areas():
+    areas = Area.query.all()
+    return render_template('list_areas.html', areas=areas)
 
 @app.route('/add_client', methods=['GET', 'POST'])
 def add_client():

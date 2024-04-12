@@ -18,6 +18,16 @@ class AddUserForm(FlaskForm):
     password = PasswordField('Contraseña', validators=[DataRequired()])
     submit = SubmitField('Agregar Usuario')
 
+class AddRoleForm(FlaskForm):
+    name = StringField('Rol', validators=[DataRequired()])
+    description = StringField('Descripción', validators=[DataRequired()])
+    submit = SubmitField('Agregar Rol')
+
+class AddAreaForm(FlaskForm):
+    name = StringField('Area', validators=[DataRequired()])
+    description = StringField('Descripción', validators=[DataRequired()])
+    submit = SubmitField('Agregar Area')
+
 class AddClientForm(FlaskForm):
     name = StringField('Razón Social', validators=[DataRequired()])
     tax_id = StringField('Rut', validators=[DataRequired()])

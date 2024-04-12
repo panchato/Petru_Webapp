@@ -31,6 +31,28 @@
                     {% if current_user.is_authenticated %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Roles
+                        </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ url_for('add_role') }}">Agregar Nuevo Rol</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('list_roles') }}">Listado de Roles</a></li>
+                            </ul>
+                    </li>
+                    {% endif %}
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Areas
+                        </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ url_for('add_area') }}">Agregar Nueva Area</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('list_areas') }}">Listado de Areas</a></li>
+                            </ul>
+                    </li>
+                    {% endif %}
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Clientes
                         </a>
                             <ul class="dropdown-menu">
