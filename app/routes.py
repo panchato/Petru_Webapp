@@ -217,7 +217,8 @@ def add_raw_material_reception():
             date=form.date.data,
             time=form.time.data,
             truck_plate=form.truck_plate.data,
-            trucker_name=form.trucker_name.data
+            trucker_name=form.trucker_name.data,
+            observations=form.observations.data
         ) # type: ignore
 
         selected_grower = Grower.query.get(form.grower_id.data)

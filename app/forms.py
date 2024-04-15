@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, FloatField, IntegerField, PasswordField, SelectField, DateField, TimeField, SubmitField, HiddenField, RadioField, BooleanField
+from wtforms import StringField, TextAreaField, FloatField, IntegerField, PasswordField, SelectField, DateField, TimeField, SubmitField, HiddenField, RadioField, BooleanField
 from wtforms.validators import DataRequired, InputRequired, ValidationError, Length, Email
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from app.models import User, Role, Client, Grower, Variety, RawMaterialPackaging, Lot
@@ -66,6 +66,7 @@ class RawMaterialReceptionForm(FlaskForm):
     time = TimeField('Hora', validators=[DataRequired()], format='%H:%M')
     truck_plate = StringField('Patente', validators=[DataRequired(), Length(max=6)])
     trucker_name = StringField('Chofer', validators=[Length(max=64)])
+    observations = TextAreaField('Observaciones', validators=[Length(max=255)])
 
     # Dynamic choice fields for Grower and Client
     grower_id = SelectField('Productor', coerce=int, validators=[DataRequired()])

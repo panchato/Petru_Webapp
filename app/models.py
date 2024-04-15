@@ -106,6 +106,7 @@ class RawMaterialReception(BaseModel):
     time = db.Column(db.Time, default=lambda: datetime.utcnow().time())
     truck_plate = db.Column(db.String(6), nullable=False)
     trucker_name = db.Column(db.String(64), nullable=True)
+    observations = db.Column(db.String(255), nullable=True)
 
     # One-to-Many relationships
     lots = db.relationship('Lot', backref=db.backref('raw_material_reception', lazy=True))
