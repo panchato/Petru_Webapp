@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, FloatField, IntegerField, PasswordField, SelectField, DateField, TimeField, SubmitField, HiddenField, RadioField, BooleanField
 from wtforms.validators import DataRequired, InputRequired, ValidationError, Length, Email
 from flask_wtf.file import FileField, FileAllowed, FileRequired
-from app.models import Client, Grower, Variety, RawMaterialPackaging, Lot
+from app.models import User, Role, Client, Grower, Variety, RawMaterialPackaging, Lot
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired()])
@@ -27,6 +27,16 @@ class AddAreaForm(FlaskForm):
     name = StringField('Area', validators=[DataRequired()])
     description = StringField('Descripción', validators=[DataRequired()])
     submit = SubmitField('Agregar Area')
+
+class AssignRoleForm(FlaskForm):
+    user_id = SelectField('Usuario', coerce=int, validators=[DataRequired()])
+    role_id = SelectField('Rol', coerce=int, validators=[DataRequired()])
+    submit = SubmitField('Asignar Rol')
+
+    def __init__(self, *args, **kwargs):
+        super(AssignRoleForm, self).__init__(*args, **kwargs)
+        self.user_id.choices = [(u.id, u.email) for u in User.query.order_by(User.email).all()]
+        self.role_id.choices = [(r.id, r.name) for r in Role.query.order_by(Role.name).all()]
 
 class AddClientForm(FlaskForm):
     name = StringField('Razón Social', validators=[DataRequired()])

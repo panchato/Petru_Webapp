@@ -3,7 +3,7 @@ import os
 import uuid
 from flask import render_template, redirect, url_for, flash, send_file, request
 from flask_login import login_user, logout_user, login_required, current_user
-from app.forms import LoginForm, AddUserForm, AddRoleForm, AddAreaForm, AddClientForm, AddGrowerForm, AddVarietyForm, AddRawMaterialPackagingForm, RawMaterialReceptionForm, LotForm, FullTruckWeightForm, LotQCForm
+from app.forms import LoginForm, AddUserForm, AddRoleForm, AddAreaForm, AssignRoleForm, AddClientForm, AddGrowerForm, AddVarietyForm, AddRawMaterialPackagingForm, RawMaterialReceptionForm, LotForm, FullTruckWeightForm, LotQCForm
 from app.models import User, Role, Area, Client, Grower, Variety, RawMaterialPackaging, RawMaterialReception, Lot, FullTruckWeight, LotQC
 from app import app, db, bcrypt
 from io import BytesIO
@@ -23,16 +23,20 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user is not None and bcrypt.check_password_hash(user.password_hash, form.password.data):
-            login_user(user)
-            next_page = request.args.get('next')
-            return redirect(next_page or url_for('index'))
         
         if user is None:
             flash('Usuario incorrecto.')
             return redirect(url_for('login'))
         
-        if not bcrypt.check_password_hash(user.password_hash, form.password.data):
+        if not user.is_active:
+            flash('Cuenta no activa. Por favor, contacte al administrador.')
+            return redirect(url_for('login'))
+        
+        if bcrypt.check_password_hash(user.password_hash, form.password.data):
+            login_user(user)
+            next_page = request.args.get('next')
+            return redirect(next_page or url_for('index'))
+        else:
             flash('Contraseña incorrecta.')
             return redirect(url_for('login'))
 
@@ -46,6 +50,7 @@ def logout():
     return redirect(url_for('login'))
 
 @app.route('/add_user', methods=['GET', 'POST'])
+@login_required
 def add_user():
     form = AddUserForm()
     if form.validate_on_submit():
@@ -59,15 +64,17 @@ def add_user():
         db.session.add(user)
         db.session.commit()
         flash('User has been added!', 'success')
-        return redirect(url_for('index'))
+        return redirect(url_for('list_users'))
     return render_template('add_user.html', title='Add User', form=form)
 
 @app.route('/list_users')
+@login_required
 def list_users():
     users = User.query.all()  # Fetch all users from the database
     return render_template('list_users.html', users=users)
 
 @app.route('/add_role', methods=['GET', 'POST'])
+@login_required
 def add_role():
     form = AddRoleForm()
     if form.validate_on_submit():
@@ -79,11 +86,13 @@ def add_role():
     return render_template('add_role.html', form=form)
 
 @app.route('/list_roles')
+@login_required
 def list_roles():
     roles = Role.query.all()
     return render_template('list_roles.html', roles=roles)
 
 @app.route('/add_area', methods=['GET', 'POST'])
+@login_required
 def add_area():
     form = AddAreaForm()
     if form.validate_on_submit():
@@ -95,11 +104,29 @@ def add_area():
     return render_template('add_area.html', form=form)
 
 @app.route('/list_areas')
+@login_required
 def list_areas():
     areas = Area.query.all()
     return render_template('list_areas.html', areas=areas)
 
+@app.route('/assign_role', methods=['GET', 'POST'])
+@login_required
+def assign_role():
+    form = AssignRoleForm()
+    if form.validate_on_submit():
+        user = User.query.get(form.user_id.data)
+        role = Role.query.get(form.role_id.data)
+        if role not in user.roles:
+            user.roles.append(role)
+            db.session.commit()
+            flash('Role assigned successfully!', 'success')
+        else:
+            flash('This user already has the assigned role.', 'warning')
+        return redirect(url_for('assign_role'))
+    return render_template('assign_role.html', form=form)
+
 @app.route('/add_client', methods=['GET', 'POST'])
+@login_required
 def add_client():
     form = AddClientForm()
     if form.validate_on_submit():
@@ -115,11 +142,13 @@ def add_client():
     return render_template('add_client.html', title='Add Client', form=form)
 
 @app.route('/list_clients')
+@login_required
 def list_clients():
     clients = Client.query.all()
     return render_template('list_clients.html', clients=clients)
 
 @app.route('/add_grower', methods=['GET', 'POST'])
+@login_required
 def add_grower():
     form = AddGrowerForm()
     if form.validate_on_submit():
@@ -134,11 +163,13 @@ def add_grower():
     return render_template('add_grower.html', form=form)
 
 @app.route('/list_growers')
+@login_required
 def list_growers():
     growers = Grower.query.all()
     return render_template('list_growers.html', growers=growers)
 
 @app.route('/add_variety', methods=['GET', 'POST'])
+@login_required
 def add_variety():
     form = AddVarietyForm()
     if form.validate_on_submit():
@@ -151,11 +182,13 @@ def add_variety():
     return render_template('add_variety.html', form=form)
 
 @app.route('/list_varieties')
+@login_required
 def list_varieties():
     varieties = Variety.query.all()
     return render_template('list_varieties.html', varieties=varieties)
 
 @app.route('/add_raw_material_packaging', methods=['GET', 'POST'])
+@login_required
 def add_raw_material_packaging():
     form = AddRawMaterialPackagingForm()
     if form.validate_on_submit():
@@ -169,11 +202,13 @@ def add_raw_material_packaging():
     return render_template('add_raw_material_packaging.html', form=form)
 
 @app.route('/list_raw_material_packagins')
+@login_required
 def list_raw_material_packagings():
     rmps = RawMaterialPackaging.query.all()
     return render_template('list_raw_material_packagings.html', rmps=rmps)
 
 @app.route('/add_raw_material_reception', methods=['GET', 'POST'])
+@login_required
 def add_raw_material_reception():
     form = RawMaterialReceptionForm()
     if form.validate_on_submit():
@@ -200,6 +235,7 @@ def add_raw_material_reception():
     return render_template('add_raw_material_reception.html', form=form)
 
 @app.route('/create_lot/<int:reception_id>', methods=['GET', 'POST'])
+@login_required
 def create_lot(reception_id):
     form = LotForm()
     if request.method == 'GET':
@@ -225,6 +261,7 @@ def create_lot(reception_id):
     return render_template('create_lot.html', form=form)
 
 @app.route('/full_truck_weight/<int:lot_id>', methods=['GET', 'POST'])
+@login_required
 def full_truck_weight(lot_id):
     lot = Lot.query.get_or_404(lot_id)
     form = FullTruckWeightForm()
@@ -249,11 +286,13 @@ def full_truck_weight(lot_id):
     return render_template('full_truck_weight.html', form=form, lot=lot)
 
 @app.route('/select_lot_for_weight_registration')
+@login_required
 def select_lot_for_weight_registration():
     lots = Lot.query.filter_by(net_weight=0).all()
     return render_template('select_lot_for_weight_registration.html', lots=lots)
 
 @app.route('/register_full_truck_weight/<int:lot_id>', methods=['GET', 'POST'])
+@login_required
 def register_full_truck_weight(lot_id):
     lot = Lot.query.get_or_404(lot_id)
     form = FullTruckWeightForm()
@@ -282,6 +321,7 @@ def register_full_truck_weight(lot_id):
     return render_template('register_full_truck_weight.html', form=form, lot=lot)
 
 @app.route('/process_selected_lot', methods=['POST'])
+@login_required
 def process_selected_lot():
     selected_lot_id = request.form.get('selected_lot')
 
@@ -293,6 +333,7 @@ def process_selected_lot():
         return redirect(url_for('raw_material_receptions_weight_zero'))
 
 @app.route('/generate_qr')
+@login_required
 def generate_qr():
     # Receive the reception_id from the query parameters
     reception_id = request.args.get('reception_id', 'default')
@@ -317,6 +358,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
 @app.route('/create_lot_qc', methods=['GET', 'POST'])
+@login_required
 def create_lot_qc():
     form = LotQCForm()
     if form.validate_on_submit():
@@ -391,11 +433,13 @@ def create_lot_qc():
     return render_template('create_lot_qc.html', form=form)
 
 @app.route('/lot_qc_reports')
+@login_required
 def lot_qc_reports():
     lot_qc_records = LotQC.query.all()  # Assuming LotQC is your model name
     return render_template('lot_qc_reports.html', lot_qc_records=lot_qc_records)
 
 @app.route('/view_lot_qc_report/<int:report_id>')
+@login_required
 def view_lot_qc_report(report_id):
     report = LotQC.query.get_or_404(report_id)
     lot = report.lot
@@ -404,6 +448,3 @@ def view_lot_qc_report(report_id):
     growers = reception.growers
 
     return render_template('view_lot_qc_report.html', report=report, reception=reception, clients=clients, growers=growers)
-
-
-

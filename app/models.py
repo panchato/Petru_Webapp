@@ -1,7 +1,7 @@
 from flask_login import UserMixin
 from datetime import datetime, date
 from flask_admin.contrib.sqla import ModelView
-from app import db, login_manager, admin
+from app import db, login_manager
 from app.basemodel import BaseModel
 
 # Association tables for many-to-many relationships
@@ -31,10 +31,8 @@ class User(UserMixin, BaseModel):
     def __str__(self):
         return self.email
 
-class UserView(ModelView):
-    column_exclude_list = ('password_hash', 'created_at', 'updated_at')
-
-admin.add_view(UserView(User, db.session))
+    def has_role(self, role_name):
+        return any(role.name == role_name for role in self.roles)
 
 @login_manager.user_loader
 def load_user(user_id):
