@@ -1,6 +1,5 @@
 from flask_login import UserMixin
 from datetime import datetime, date
-from sqlalchemy import ForeignKey
 from app import db, login_manager
 from app.basemodel import BaseModel
 
