@@ -1,6 +1,5 @@
 from flask_login import UserMixin
 from datetime import datetime, date
-from flask_admin.contrib.sqla import ModelView
 from app import db, login_manager
 from app.basemodel import BaseModel
 
@@ -19,8 +18,8 @@ class User(UserMixin, BaseModel):
     __tablename__ = 'users'
     name = db.Column(db.String(64), nullable=False)
     last_name = db.Column(db.String(64), nullable=False)
-    email = db.Column(db.String(64), nullable=False)
-    phone_number = db.Column(db.String(10), nullable=False)
+    email = db.Column(db.String(64), unique=True, nullable=False)
+    phone_number = db.Column(db.String(9), nullable=False)
     password_hash = db.Column(db.String(128))
     is_active = db.Column(db.Boolean, default=True, nullable=False)
     is_external = db.Column(db.Boolean, default=False, nullable=False)
