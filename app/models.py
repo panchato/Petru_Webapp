@@ -1,5 +1,6 @@
 from flask_login import UserMixin
 from datetime import datetime, date
+from sqlalchemy import ForeignKey
 from app import db, login_manager
 from app.basemodel import BaseModel
 
@@ -11,6 +12,11 @@ area_user = db.Table('area_user',
 
 role_user = db.Table('role_user',
     db.Column('role_id', db.Integer, db.ForeignKey('roles.id'), primary_key=True),
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True)
+)
+
+client_user = db.Table('client_user',
+    db.Column('client_id', db.Integer, db.ForeignKey('clients.id'), primary_key=True),
     db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True)
 )
 
@@ -26,6 +32,7 @@ class User(UserMixin, BaseModel):
 
     roles = db.relationship('Role', secondary=role_user, backref=db.backref('users', lazy='dynamic'))
     areas = db.relationship('Area', secondary=area_user, backref=db.backref('users', lazy='dynamic'))
+    clients = db.relationship('Client', secondary=client_user, backref=db.backref('users', lazy='dynamic'))
 
     def __str__(self):
         return self.email
@@ -35,6 +42,9 @@ class User(UserMixin, BaseModel):
     
     def from_area(self, area_name):
         return any(area.name == area_name for area in self.areas)
+    
+    def from_client(self, client_name):
+        return any(client.name == client_name for client in self.clients)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -49,27 +59,6 @@ class Area(BaseModel):
     __tablename__ = 'areas'
     name = db.Column(db.String(64), nullable=False)
     description = db.Column(db.String(255), nullable=False)
-
-class Client(BaseModel):
-    __tablename__ = 'clients'
-    name = db.Column(db.String(128), nullable=False)
-    tax_id = db.Column(db.String(10), nullable=False, unique=True)
-    address = db.Column(db.String(128), nullable=False)
-    comuna = db.Column(db.String(64), nullable=False)
-    is_active = db.Column(db.Boolean, default=True, nullable=False)
-
-    def __str__(self):
-        return self.name
-
-class Grower(BaseModel):
-    __tablename__ = 'growers'
-    name = db.Column(db.String(128), nullable=False)
-    tax_id = db.Column(db.String(10), nullable=False, unique=True)
-    csg_code = db.Column(db.String(10), default=0, nullable=False)
-    is_active = db.Column(db.Boolean, default=True, nullable=False)
-
-    def __str__(self):
-        return self.name
 
 class Variety(BaseModel):
     __tablename__ = 'varieties'
@@ -96,10 +85,31 @@ rawmaterialreception_grower = db.Table('rawmaterialreception_grower',
     db.Column('grower_id', db.Integer, db.ForeignKey('growers.id'), primary_key=True)
 )
 
+class Grower(BaseModel):
+    __tablename__ = 'growers'
+    name = db.Column(db.String(128), nullable=False)
+    tax_id = db.Column(db.String(10), nullable=False, unique=True)
+    csg_code = db.Column(db.String(10), default=0, nullable=False)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
+
+    def __str__(self):
+        return self.name
+
 rawmaterialreception_client = db.Table('rawmaterialreception_client',
     db.Column('reception_id', db.Integer, db.ForeignKey('rawmaterialreceptions.id'), primary_key=True),
     db.Column('client_id', db.Integer, db.ForeignKey('clients.id'), primary_key=True)
 )
+
+class Client(BaseModel):
+    __tablename__ = 'clients'
+    name = db.Column(db.String(128), nullable=False)
+    tax_id = db.Column(db.String(10), nullable=False, unique=True)
+    address = db.Column(db.String(128), nullable=False)
+    comuna = db.Column(db.String(64), nullable=False)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
+
+    def __str__(self):
+        return self.name
 
 class RawMaterialReception(BaseModel):
     __tablename__ = 'rawmaterialreceptions'
