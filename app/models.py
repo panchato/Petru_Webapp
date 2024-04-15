@@ -33,6 +33,9 @@ class User(UserMixin, BaseModel):
 
     def has_role(self, role_name):
         return any(role.name == role_name for role in self.roles)
+    
+    def from_area(self, area_name):
+        return any(area.name == area_name for area in self.areas)
 
 @login_manager.user_loader
 def load_user(user_id):
