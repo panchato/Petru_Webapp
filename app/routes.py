@@ -3,7 +3,7 @@ import os
 import uuid
 from flask import render_template, redirect, url_for, flash, send_file, request
 from flask_login import login_user, logout_user, login_required, current_user
-from app.forms import LoginForm, AddUserForm, AddRoleForm, AddAreaForm, AssignRoleForm, AddClientForm, AddGrowerForm, AddVarietyForm, AddRawMaterialPackagingForm, RawMaterialReceptionForm, LotForm, FullTruckWeightForm, LotQCForm
+from app.forms import LoginForm, AddUserForm, AddRoleForm, AddAreaForm, AssignRoleForm, AssignAreaForm, AddClientForm, AddGrowerForm, AddVarietyForm, AddRawMaterialPackagingForm, RawMaterialReceptionForm, LotForm, FullTruckWeightForm, LotQCForm
 from app.models import User, Role, Area, Client, Grower, Variety, RawMaterialPackaging, RawMaterialReception, Lot, FullTruckWeight, LotQC
 from app import app, db, bcrypt
 from io import BytesIO
@@ -85,6 +85,22 @@ def add_role():
         return redirect(url_for('list_roles'))
     return render_template('add_role.html', form=form)
 
+@app.route('/assign_role', methods=['GET', 'POST'])
+@login_required
+def assign_role():
+    form = AssignRoleForm()
+    if form.validate_on_submit():
+        user = User.query.get(form.user_id.data)
+        role = Role.query.get(form.role_id.data)
+        if role not in user.roles:
+            user.roles.append(role)
+            db.session.commit()
+            flash('Role assigned successfully!', 'success')
+        else:
+            flash('This user already has the assigned role.', 'warning')
+        return redirect(url_for('assign_role'))
+    return render_template('assign_role.html', form=form)
+
 @app.route('/list_roles')
 @login_required
 def list_roles():
@@ -103,27 +119,27 @@ def add_area():
         return redirect(url_for('list_areas'))
     return render_template('add_area.html', form=form)
 
+@app.route('/assign_area', methods=['GET', 'POST'])
+@login_required
+def assign_area():
+    form = AssignAreaForm()
+    if form.validate_on_submit():
+        user = User.query.get(form.user_id.data)
+        area = Area.query.get(form.area_id.data)
+        if area not in user.areas:
+            user.areas.append(area)
+            db.session.commit()
+            flash('Area assigned successfully!', 'success')
+        else:
+            flash('This user already has the assigned Area.', 'warning')
+        return redirect(url_for('assign_area'))
+    return render_template('assign_area.html', form=form)
+
 @app.route('/list_areas')
 @login_required
 def list_areas():
     areas = Area.query.all()
     return render_template('list_areas.html', areas=areas)
-
-@app.route('/assign_role', methods=['GET', 'POST'])
-@login_required
-def assign_role():
-    form = AssignRoleForm()
-    if form.validate_on_submit():
-        user = User.query.get(form.user_id.data)
-        role = Role.query.get(form.role_id.data)
-        if role not in user.roles:
-            user.roles.append(role)
-            db.session.commit()
-            flash('Role assigned successfully!', 'success')
-        else:
-            flash('This user already has the assigned role.', 'warning')
-        return redirect(url_for('assign_role'))
-    return render_template('assign_role.html', form=form)
 
 @app.route('/add_client', methods=['GET', 'POST'])
 @login_required

@@ -34,6 +34,7 @@
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{{ url_for('add_role') }}">Agregar Nuevo Rol</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('list_roles') }}">Listado de Roles</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('assign_role') }}">Asignar Rol a Usuario</a></li>
                             </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -43,14 +44,7 @@
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{{ url_for('add_area') }}">Agregar Nueva Area</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('list_areas') }}">Listado de Areas</a></li>
-                            </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Asignaciones
-                        </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{{ url_for('assign_role') }}">Asignar Roles</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('assign_area') }}">Asignar Area a Usuario</a></li>
                             </ul>
                     </li>
                     <li class="nav-item dropdown">
