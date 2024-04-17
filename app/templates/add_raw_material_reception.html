@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <h2>Recepción de Materia Prima - Primer Paso</h2>
-<form method="POST" action="">
+<form method="POST">
     {{ form.hidden_tag() }}
     <div class="form-group">{{ form.client_id.label }} {{ form.client_id(class="form-select") }}</div>
     <div class="form-group">{{ form.grower_id.label }} {{ form.grower_id(class="form-select") }}</div>
