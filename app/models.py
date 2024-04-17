@@ -78,7 +78,6 @@ class RawMaterialPackaging(BaseModel):
     def __str__(self):
         return self.name
 
-# Association tables for many-to-many relationships
 rawmaterialreception_grower = db.Table('rawmaterialreception_grower',
     db.Column('reception_id', db.Integer, db.ForeignKey('rawmaterialreceptions.id'), primary_key=True),
     db.Column('grower_id', db.Integer, db.ForeignKey('growers.id'), primary_key=True)
@@ -113,8 +112,8 @@ class Client(BaseModel):
 class RawMaterialReception(BaseModel):
     __tablename__ = 'rawmaterialreceptions'
     waybill = db.Column(db.String(64), nullable=False)
-    date = db.Column(db.Date, default=date.today)
-    time = db.Column(db.Time, default=lambda: datetime.utcnow().time())
+    date = db.Column(db.Date, default=date.today, nullable=False)
+    time = db.Column(db.Time, default=lambda: datetime.utcnow().time(), nullable=False)
     truck_plate = db.Column(db.String(6), nullable=False)
     trucker_name = db.Column(db.String(64), nullable=True)
     observations = db.Column(db.String(255), nullable=True)
@@ -133,6 +132,9 @@ class Lot(BaseModel):
     lot_number = db.Column(db.Integer, unique=True, nullable=False)
     packagings_quantity = db.Column(db.Integer, nullable=False)
     net_weight = db.Column(db.Float, nullable=True, default=0)
+    has_qc = db.Column(db.Boolean, default=False, nullable=False)
+    is_fumigated = db.Column(db.Boolean, default=False, nullable=False)
+    on_warehouse = db.Column(db.Boolean, default=True, nullable=False)
 
     #One-to-One relationship
     full_truck_weight = db.relationship('FullTruckWeight', backref='lot', uselist=False, lazy=True)
@@ -183,3 +185,19 @@ class LotQC(BaseModel):
     yellow = db.Column(db.Float, nullable=False)
     inshell_image_path = db.Column(db.String(255), nullable=True)
     shelled_image_path = db.Column(db.String(255), nullable=True)
+
+fumigation_lot = db.Table('fumigation_lot',
+    db.Column('fumigation_id', db.Integer, db.ForeignKey('fumigations.id'), primary_key=True),
+    db.Column('lot_id', db.Integer, db.ForeignKey('lots.id'), primary_key=True)
+)
+
+class Fumigation(BaseModel):
+    __tablename__ = 'fumigations'
+    work_order = db.Column(db.Integer, unique=True)
+    start_date = db.Column(db.Date, default=date.today, nullable=False)
+    end_time = db.Column(db.Time, default=lambda: datetime.utcnow().time(), nullable=False)
+    real_end_date = db.Column(db.Date, default=date.today, nullable=True)
+    real_end_time = db.Column(db.Time, default=lambda: datetime.utcnow().time(), nullable=True)
+    work_order_path = db.Column(db.String(255), nullable=True)
+    certificate_path = db.Column(db.String(255), nullable=True)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
