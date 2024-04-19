@@ -133,7 +133,7 @@ class Lot(BaseModel):
     packagings_quantity = db.Column(db.Integer, nullable=False)
     net_weight = db.Column(db.Float, nullable=True, default=0)
     has_qc = db.Column(db.Boolean, default=False, nullable=False)
-    is_fumigated = db.Column(db.Boolean, default=False, nullable=False)
+    fumigation_status = db.Column(db.String(1), default=1, nullable=False)
     on_warehouse = db.Column(db.Boolean, default=True, nullable=False)
 
     #One-to-One relationship

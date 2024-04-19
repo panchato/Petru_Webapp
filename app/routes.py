@@ -3,8 +3,8 @@ import os
 import uuid
 from flask import render_template, redirect, url_for, flash, send_file, request
 from flask_login import login_user, logout_user, login_required, current_user
-from app.forms import LoginForm, AddUserForm, AddRoleForm, AddAreaForm, AssignRoleForm, AssignAreaForm, AddClientForm, AddGrowerForm, AddVarietyForm, AddRawMaterialPackagingForm, RawMaterialReceptionForm, LotForm, FullTruckWeightForm, LotQCForm
-from app.models import User, Role, Area, Client, Grower, Variety, RawMaterialPackaging, RawMaterialReception, Lot, FullTruckWeight, LotQC
+from app.forms import LoginForm, AddUserForm, AddRoleForm, AddAreaForm, AssignRoleForm, AssignAreaForm, AddClientForm, AddGrowerForm, AddVarietyForm, AddRawMaterialPackagingForm, CreateRawMaterialReceptionForm, CreateLotForm, FullTruckWeightForm, LotQCForm, FumigationForm
+from app.models import User, Role, Area, Client, Grower, Variety, RawMaterialPackaging, RawMaterialReception, Lot, FullTruckWeight, LotQC, Fumigation
 from app import app, db, bcrypt
 from io import BytesIO
 from datetime import datetime
@@ -223,10 +223,10 @@ def list_raw_material_packagings():
     rmps = RawMaterialPackaging.query.all()
     return render_template('list_raw_material_packagings.html', rmps=rmps)
 
-@app.route('/add_raw_material_reception', methods=['GET', 'POST'])
+@app.route('/create_raw_material_reception', methods=['GET', 'POST'])
 @login_required
-def add_raw_material_reception():
-    form = RawMaterialReceptionForm()
+def create_raw_material_reception():
+    form = CreateRawMaterialReceptionForm()
     if form.validate_on_submit():
         reception = RawMaterialReception(
             waybill=form.waybill.data,
@@ -249,33 +249,40 @@ def add_raw_material_reception():
         flash('Raw Material Reception added successfully!')
         return redirect(url_for('create_lot', reception_id=reception.id))
 
-    return render_template('add_raw_material_reception.html', form=form)
+    return render_template('create_raw_material_reception.html', form=form)
 
+@app.route('/create_lot/<int:reception_id>', methods=['GET', 'POST'])
 @app.route('/create_lot/<int:reception_id>', methods=['GET', 'POST'])
 @login_required
 def create_lot(reception_id):
-    form = LotForm()
+    form = CreateLotForm()
+    reception = RawMaterialReception.query.get_or_404(reception_id)
+
     if request.method == 'GET':
-        reception = RawMaterialReception.query.get_or_404(reception_id)
         form.grower_name.data = ', '.join([grower.name for grower in reception.growers])
         form.client_name.data = ', '.join([client.name for client in reception.clients])
         form.waybill.data = reception.waybill
-    if form.validate_on_submit():
-        # This checks if the form submission was caused by the 'create_another' button
-        if 'submit' in request.form:
-            lot = Lot(
-                rawmaterialreception_id=reception_id,
-                variety_id=form.variety_id.data,
-                rawmaterialpackaging_id=form.rawmaterialpackaging_id.data,
-                packagings_quantity=form.packagings_quantity.data,
-                lot_number=form.lot_number.data
-            ) # type: ignore
-            db.session.add(lot)
-            db.session.commit()
-            flash('Lot created successfully.', 'success')
-            return redirect(url_for('create_lot', reception_id=reception_id))
 
-    return render_template('create_lot.html', form=form)
+    if form.validate_on_submit():
+        existing_lot = Lot.query.filter_by(lot_number=form.lot_number.data).first()
+        if existing_lot:
+            flash('El Nº de Lote ya existe. Por favor, use un Nº de Lote distinto.', 'warning')
+            return render_template('create_lot.html', form=form, reception_id=reception_id)
+
+        lot = Lot(
+            rawmaterialreception_id=reception_id,
+            variety_id=form.variety_id.data,
+            rawmaterialpackaging_id=form.rawmaterialpackaging_id.data,
+            packagings_quantity=form.packagings_quantity.data,
+            lot_number=form.lot_number.data
+        ) # type: ignore
+        db.session.add(lot)
+        db.session.commit()
+        flash(f'Lote Nº {form.lot_number.data} creado exitosamente.', 'success')
+        return render_template('create_lot.html', form=form, reception_id=reception_id)
+
+    return render_template('create_lot.html', form=form, reception_id=reception_id)
+
 
 @app.route('/full_truck_weight/<int:lot_id>', methods=['GET', 'POST'])
 @login_required
@@ -302,11 +309,11 @@ def full_truck_weight(lot_id):
 
     return render_template('full_truck_weight.html', form=form, lot=lot)
 
-@app.route('/select_lot_for_weight_registration')
+@app.route('/list_lots')
 @login_required
-def select_lot_for_weight_registration():
+def list_lots():
     lots = Lot.query.filter_by(net_weight=0).all()
-    return render_template('select_lot_for_weight_registration.html', lots=lots)
+    return render_template('list_lots.html', lots=lots)
 
 @app.route('/register_full_truck_weight/<int:lot_id>', methods=['GET', 'POST'])
 @login_required
@@ -336,18 +343,6 @@ def register_full_truck_weight(lot_id):
         return redirect(url_for('index'))
 
     return render_template('register_full_truck_weight.html', form=form, lot=lot)
-
-@app.route('/process_selected_lot', methods=['POST'])
-@login_required
-def process_selected_lot():
-    selected_lot_id = request.form.get('selected_lot')
-
-    if selected_lot_id:
-        return redirect(url_for('full_truck_weight', lot_id=selected_lot_id))
-    
-    else:
-        flash('No lot selected.', 'warning')
-        return redirect(url_for('raw_material_receptions_weight_zero'))
 
 @app.route('/generate_qr')
 @login_required
@@ -449,11 +444,11 @@ def create_lot_qc():
 
     return render_template('create_lot_qc.html', form=form)
 
-@app.route('/lot_qc_reports')
+@app.route('/list_lot_qc_reports')
 @login_required
-def lot_qc_reports():
-    lot_qc_records = LotQC.query.all()  # Assuming LotQC is your model name
-    return render_template('lot_qc_reports.html', lot_qc_records=lot_qc_records)
+def list_lot_qc_reports():
+    lot_qc_reports = LotQC.query.all()
+    return render_template('list_lot_qc_reports.html', lot_qc_records=lot_qc_reports)
 
 @app.route('/view_lot_qc_report/<int:report_id>')
 @login_required
@@ -465,3 +460,30 @@ def view_lot_qc_report(report_id):
     growers = reception.growers
 
     return render_template('view_lot_qc_report.html', report=report, reception=reception, clients=clients, growers=growers)
+
+@app.route('/create_fumigation', methods=['GET', 'POST'])
+@login_required
+def create_fumigation():
+    form = FumigationForm()
+    if form.validate_on_submit():
+        fumigation = Fumigation(
+            work_order=form.work_order.data,
+            start_date=form.start_date.data,
+            start_time=form.start_time.data,
+            # Handle the work_order_doc file upload here
+        ) # type: ignore
+
+        # Process each selected lot
+        for lot_id in form.lot_selection.data:
+            lot = Lot.query.get(lot_id)
+            if lot:
+                # Change the fumigation status to 'In fumigation'
+                lot.fumigation_status = '2'
+                fumigation.lots.append(lot)
+
+        db.session.add(fumigation)
+        db.session.commit()
+        flash('Fumigación creada con éxito.', 'success')
+        return redirect(url_for('dashboard'))
+
+    return render_template('create_fumigation.html', form=form)

@@ -1,7 +1,28 @@
 {% extends 'base.html' %}
 {% block content %}
+<script>
+    $(document).ready(function() {
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        var category = "{{ messages[0][0] }}";
+        var message = "{{ messages[0][1] }}";
+        $('.modal-body').text(message);
+        if (category === 'success') {
+            $('.modal-footer').html('<button type="button" class="btn btn-secondary" onclick="window.location.href=\'/\'">Close</button>' +
+                                    '<button type="button" class="btn btn-primary" onclick="window.location.href=\'{{ url_for('create_lot', reception_id=reception_id) }}\'">Create Another Lot</button>');
+            $('#errorModal').modal({backdrop: 'static', keyboard: false});
+        } else {
+            $('.modal-footer').html('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>');
+        }
+        $('#errorModal').modal('show');
+        {% endif %}
+        {% endwith %}
+    });
+</script>
+
+
 <h2>Creación de Lotes - Segundo Paso</h2>
-<form method="POST" action="">
+<form method="POST">
     {{ form.hidden_tag() }}
     <div class="row">
         <div class="col-md-4 form-group">{{ form.client_name.label }} {{ form.client_name(class="form-control") }}</div>
@@ -13,5 +34,23 @@
     <div class="form-group">{{ form.packagings_quantity.label }} {{ form.packagings_quantity(class="form-control") }}</div>
     <div class="form-group">{{ form.lot_number.label }} {{ form.lot_number(class="form-control") }}</div><br>
     <div>{{ form.submit(class="btn btn-primary") }}</div><br>
-    </form>
+</form>
+<!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <!-- Error message will be injected here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

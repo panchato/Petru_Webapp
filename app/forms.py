@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, FloatField, IntegerField, PasswordField, SelectField, DateField, TimeField, SubmitField, HiddenField, RadioField, BooleanField
+from wtforms import StringField, TextAreaField, FloatField, IntegerField, PasswordField, SelectField, SelectMultipleField, DateField, TimeField, SubmitField, HiddenField, RadioField, BooleanField
 from wtforms.validators import DataRequired, InputRequired, ValidationError, Length, Email
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from app.models import User, Role, Area, Client, Grower, Variety, RawMaterialPackaging, Lot
@@ -70,7 +70,7 @@ class AddRawMaterialPackagingForm(FlaskForm):
     tare = FloatField('Tara', validators=[DataRequired()])
     submit = SubmitField('Agregar Envase de MP')
 
-class RawMaterialReceptionForm(FlaskForm):
+class CreateRawMaterialReceptionForm(FlaskForm):
     waybill = StringField('Guía Nº', validators=[DataRequired(), Length(max=64)])
     date = DateField('Fecha', validators=[DataRequired()], format='%Y-%m-%d')
     time = TimeField('Hora', validators=[DataRequired()], format='%H:%M')
@@ -85,12 +85,12 @@ class RawMaterialReceptionForm(FlaskForm):
     submit = SubmitField('Crear Recepción')
 
     def __init__(self, *args, **kwargs):
-        super(RawMaterialReceptionForm, self).__init__(*args, **kwargs)
+        super(CreateRawMaterialReceptionForm, self).__init__(*args, **kwargs)
         self.grower_id.choices = [(g.id, g.name) for g in Grower.query.all()]
         self.client_id.choices = [(c.id, c.name) for c in Client.query.all()]
 
-class LotForm(FlaskForm):
-    reception_id = HiddenField('Reception ID')  # This remains hidden and carries the actual reception ID
+class CreateLotForm(FlaskForm):
+    reception_id = HiddenField('Reception ID')
     grower_name = StringField('Productor', render_kw={'readonly': True})
     client_name = StringField('Cliente', render_kw={'readonly': True})
     waybill = StringField('Guía de Despacho Nº', render_kw={'readonly': True})
@@ -100,7 +100,7 @@ class LotForm(FlaskForm):
     lot_number = IntegerField('Número de Lote', validators=[DataRequired()])
 
     def __init__(self, *args, **kwargs):
-        super(LotForm, self).__init__(*args, **kwargs)
+        super(CreateLotForm, self).__init__(*args, **kwargs)
         self.variety_id.choices = [(v.id, v.name) for v in Variety.query.all()]
         self.rawmaterialpackaging_id.choices = [(p.id, p.name) for p in RawMaterialPackaging.query.all()]
 
@@ -139,10 +139,10 @@ class LotQCForm(FlaskForm):
     light_amber = FloatField('Light Amber', validators=[InputRequired()])
     amber = FloatField('Amber', validators=[InputRequired()])
     yellow = FloatField('Amarilla', validators=[InputRequired()])
-    inshell_image = FileField('Imagen de Cáscara', validators=[FileRequired(), FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')])
-    shelled_image = FileField('Imagen de Pulpa', validators=[FileRequired(), FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')])
+    inshell_image = FileField('Imagen de Cáscara', validators=[FileRequired(), FileAllowed(['jpg', 'png', 'jpeg'], 'Imágenes Solamente!')])
+    shelled_image = FileField('Imagen de Pulpa', validators=[FileRequired(), FileAllowed(['jpg', 'png', 'jpeg'], 'Imágenes Solamente!')])
     lot_id = SelectField('Lote', coerce=int, validators=[DataRequired()])
-    submit = SubmitField('Submit')
+    submit = SubmitField('Crear QC')
 
     def __init__(self, *args, **kwargs):
         super(LotQCForm, self).__init__(*args, **kwargs)
@@ -152,3 +152,15 @@ class LotQCForm(FlaskForm):
         total_color_weight = self.extra_light.data + self.light.data + self.light_amber.data + self.amber.data # type: ignore
         if field.data != total_color_weight:
             raise ValidationError('El peso de pulpa debe ser igual a la suma de los pesos de los colores.')
+        
+class FumigationForm(FlaskForm):
+    work_order = IntegerField('Orden de Trabajo', validators=[DataRequired()])
+    start_date = DateField('Fecha de Inicio', validators=[DataRequired()], format='%Y-%m-%d')
+    start_time = TimeField('Hora de Inicio', validators=[DataRequired()], format='%H:%M')
+    work_order_doc = FileField('Orden de Trabajo', validators=[FileRequired(), FileAllowed(['pdf'], 'Sólo PDF!')])
+    lot_selection = SelectMultipleField('Lotes', coerce=int, choices=[])
+    submit = SubmitField('Crear Fumigación')
+
+    def __init__(self, *args, **kwargs):
+        super(FumigationForm, self).__init__(*args, **kwargs)
+        self.lot_selection.choices = [(lot.id, lot.name) for lot in Lot.query.all()]

@@ -1,21 +1,16 @@
 {% extends "base.html" %}
-
 {% block content %}
-<div class="container">
-    <h2>Register Full Truck Weight for Lot #{{ lot.lot_number }}</h2>
-    <form action="" method="post">
+    <h2>Registrar Peso de Romana para Lote {{ '%03d' % lot.lot_number }}</h2>
+    <form method="POST">
         {{ form.hidden_tag() }}
         <div class="form-group">
-            {{ form.loaded_truck_weight.label }}
-            {{ form.loaded_truck_weight(class="form-control") }}
+            {{ form.loaded_truck_weight.label }} {{ form.loaded_truck_weight(class="form-control") }}
         </div>
         <div class="form-group">
-            {{ form.empty_truck_weight.label }}
-            {{ form.empty_truck_weight(class="form-control") }}
-        </div>
+            {{ form.empty_truck_weight.label }} {{ form.empty_truck_weight(class="form-control") }}
+        </div><br>
         <div class="form-group">
             {{ form.submit(class="btn btn-primary") }}
         </div>
     </form>
-</div>
 {% endblock %}
