@@ -1,7 +1,7 @@
 import logging
 from getpass import getpass
 from app import app, db, bcrypt
-from app.models import User, Role, role_user
+from app.models import User, Role
 
 logging.basicConfig(level=logging.INFO)
 
