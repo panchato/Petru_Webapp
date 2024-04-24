@@ -193,11 +193,14 @@ fumigation_lot = db.Table('fumigation_lot',
 
 class Fumigation(BaseModel):
     __tablename__ = 'fumigations'
-    work_order = db.Column(db.Integer, unique=True)
+    work_order = db.Column(db.String, unique=True)
     start_date = db.Column(db.Date, default=date.today, nullable=False)
-    end_time = db.Column(db.Time, default=lambda: datetime.utcnow().time(), nullable=False)
-    real_end_date = db.Column(db.Date, default=date.today, nullable=True)
-    real_end_time = db.Column(db.Time, default=lambda: datetime.utcnow().time(), nullable=True)
+    start_time = db.Column(db.Time, default=lambda: datetime.utcnow().time(), nullable=False)
+    real_end_date = db.Column(db.Date, nullable=True)
+    real_end_time = db.Column(db.Time, nullable=True)
     work_order_path = db.Column(db.String(255), nullable=True)
     certificate_path = db.Column(db.String(255), nullable=True)
     is_active = db.Column(db.Boolean, default=True, nullable=False)
+
+    # Many-to-Many relationships
+    lots = db.relationship('Lot', secondary=fumigation_lot, backref=db.backref('fumigations', lazy='dynamic'))
