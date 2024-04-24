@@ -252,7 +252,6 @@ def create_raw_material_reception():
     return render_template('create_raw_material_reception.html', form=form)
 
 @app.route('/create_lot/<int:reception_id>', methods=['GET', 'POST'])
-@app.route('/create_lot/<int:reception_id>', methods=['GET', 'POST'])
 @login_required
 def create_lot(reception_id):
     form = CreateLotForm()
@@ -283,36 +282,10 @@ def create_lot(reception_id):
 
     return render_template('create_lot.html', form=form, reception_id=reception_id)
 
-
-@app.route('/full_truck_weight/<int:lot_id>', methods=['GET', 'POST'])
-@login_required
-def full_truck_weight(lot_id):
-    lot = Lot.query.get_or_404(lot_id)
-    form = FullTruckWeightForm()
-
-    if form.validate_on_submit():
-        full_truck_weight = FullTruckWeight(
-            loaded_truck_weight=form.loaded_truck_weight.data,
-            empty_truck_weight=form.empty_truck_weight.data,
-            lot_id=lot_id
-        ) # type: ignore
-        db.session.add(full_truck_weight)
-        db.session.commit()
-
-        # Calculate and update the net weight of the lot
-        net_weight = full_truck_weight.loaded_truck_weight - full_truck_weight.empty_truck_weight - (lot.raw_material_packaging.tare * lot.packagings_quantity)
-        lot.net_weight = net_weight
-        db.session.commit()
-
-        flash('Full truck weight and net weight registered successfully!', 'success')
-        return redirect(url_for('index'))
-
-    return render_template('full_truck_weight.html', form=form, lot=lot)
-
 @app.route('/list_lots')
 @login_required
 def list_lots():
-    lots = Lot.query.filter_by(net_weight=0).all()
+    lots = Lot.query.order_by(Lot.lot_number.asc()).all()
     return render_template('list_lots.html', lots=lots)
 
 @app.route('/register_full_truck_weight/<int:lot_id>', methods=['GET', 'POST'])
@@ -470,7 +443,7 @@ def create_fumigation():
             work_order=form.work_order.data,
             start_date=form.start_date.data,
             start_time=form.start_time.data,
-            # Handle the work_order_doc file upload here
+            # Assuming handling of file uploads is done elsewhere
         ) # type: ignore
 
         # Process each selected lot

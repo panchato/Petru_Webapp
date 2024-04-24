@@ -163,4 +163,5 @@ class FumigationForm(FlaskForm):
 
     def __init__(self, *args, **kwargs):
         super(FumigationForm, self).__init__(*args, **kwargs)
-        self.lot_selection.choices = [(lot.id, lot.name) for lot in Lot.query.all()]
+        sorted_lots = Lot.query.order_by(Lot.lot_number).all()
+        self.lot_selection.choices = [(lot.id, f'Lote Nº {lot.lot_number}') for lot in sorted_lots]
