@@ -154,8 +154,8 @@ class LotQCForm(FlaskForm):
             raise ValidationError('El peso de pulpa debe ser igual a la suma de los pesos de los colores.')
         
 class FumigationForm(FlaskForm):
-    work_order = IntegerField('Orden de Trabajo', validators=[DataRequired()])
-    start_date = DateField('Fecha de Inicio', validators=[DataRequired()], format='%Y-%m-%d')
+    work_order = StringField('Orden de Trabajo', validators=[DataRequired()])
+    start_date = DateField('Fecha de Inicio', validators=[DataRequired()], format='%d-%m-%Y')
     start_time = TimeField('Hora de Inicio', validators=[DataRequired()], format='%H:%M')
     work_order_doc = FileField('Orden de Trabajo', validators=[FileRequired(), FileAllowed(['pdf'], 'Sólo PDF!')])
     lot_selection = SelectMultipleField('Lotes', coerce=int, choices=[])
@@ -163,5 +163,6 @@ class FumigationForm(FlaskForm):
 
     def __init__(self, *args, **kwargs):
         super(FumigationForm, self).__init__(*args, **kwargs)
-        sorted_lots = Lot.query.order_by(Lot.lot_number).all()
+        # Filter lots where fumigation_status is '2'
+        sorted_lots = Lot.query.filter_by(fumigation_status='1').order_by(Lot.lot_number).all()
         self.lot_selection.choices = [(lot.id, f'Lote Nº {lot.lot_number}') for lot in sorted_lots]

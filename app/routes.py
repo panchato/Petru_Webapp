@@ -438,25 +438,58 @@ def view_lot_qc_report(report_id):
 @login_required
 def create_fumigation():
     form = FumigationForm()
+
     if form.validate_on_submit():
+
+        existing_work_order = Fumigation.query.filter_by(work_order=form.work_order.data).first()
+        if existing_work_order:
+            flash('La Orden de Fumigación ya existe. Por favor, use otra', 'warning')
+            return redirect(url_for('create_fumigation'))
+
+        if not form.lot_selection.data:
+            flash('Por favor, seleccione al menos un Lote para continuar.', 'warning')
+            return redirect(url_for('create_fumigation'))
+
+        selected_lots = Lot.query.filter(Lot.id.in_(form.lot_selection.data))
+        if any(lot.fumigation_status != '1' for lot in selected_lots):
+            flash('Uno o más lotes seleccionados ya han sido fumigados', 'warning')
+            return redirect(url_for('create_fumigation'))
+        
         fumigation = Fumigation(
             work_order=form.work_order.data,
             start_date=form.start_date.data,
             start_time=form.start_time.data,
-            # Assuming handling of file uploads is done elsewhere
-        ) # type: ignore
+        )# type: ignore 
 
-        # Process each selected lot
-        for lot_id in form.lot_selection.data:
-            lot = Lot.query.get(lot_id)
-            if lot:
-                # Change the fumigation status to 'In fumigation'
-                lot.fumigation_status = '2'
-                fumigation.lots.append(lot)
+        for lot in selected_lots:
+            lot.fumigation_status = '2'
+            fumigation.lots.append(lot)
 
-        db.session.add(fumigation)
-        db.session.commit()
-        flash('Fumigación creada con éxito.', 'success')
-        return redirect(url_for('dashboard'))
+        def save_pdf(uploaded_file):
+            if uploaded_file:
+                original_name = secure_filename(uploaded_file.filename)
+                timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
+                unique_name = f"{uuid.uuid4()}_{timestamp}_{original_name}"
+                relative_path = os.path.join('pdf', unique_name)
+                full_path = os.path.join(app.config['UPLOAD_PATH_PDF'], unique_name)
+                try:
+                    uploaded_file.save(full_path)
+                    flash(f'PDF saved: {unique_name}', 'info')
+                    return relative_path
+                except Exception as e:
+                    flash(f"Error saving file: {str(e)}", 'error')
+                    return None
+            else:
+                flash('No file uploaded', 'warning')
+                return None
+
+        work_order_path = save_pdf(form.work_order_doc.data)
+        
+        if work_order_path:
+            fumigation.work_order_path = work_order_path
+            db.session.add(fumigation)
+            db.session.commit()
+            flash('Fumigación creada con éxito.', 'success')
+            return redirect(url_for('index'))
 
     return render_template('create_fumigation.html', form=form)

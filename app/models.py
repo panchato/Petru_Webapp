@@ -193,9 +193,9 @@ fumigation_lot = db.Table('fumigation_lot',
 
 class Fumigation(BaseModel):
     __tablename__ = 'fumigations'
-    work_order = db.Column(db.String, unique=True)
-    start_date = db.Column(db.Date, default=date.today, nullable=False)
-    start_time = db.Column(db.Time, default=lambda: datetime.utcnow().time(), nullable=False)
+    work_order = db.Column(db.String(64), unique=True, nullable=False)
+    start_date = db.Column(db.Date, nullable=False)
+    start_time = db.Column(db.Time, nullable=False)
     real_end_date = db.Column(db.Date, nullable=True)
     real_end_time = db.Column(db.Time, nullable=True)
     work_order_path = db.Column(db.String(255), nullable=True)
