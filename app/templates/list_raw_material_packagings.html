@@ -16,6 +16,10 @@
             <td>{{ rmp.name }}</td>
             <td>{{ rmp.tare }}</td>
         </tr>
+        {% else %}
+        <tr>
+            <td colspan="6">No se encontraron envases en la base de datos.</td>
+        </tr>
         {% endfor %}
     </tbody>
 </table>

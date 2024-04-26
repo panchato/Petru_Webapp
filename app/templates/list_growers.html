@@ -18,6 +18,10 @@
             <td>{{ grower.tax_id }}</td>
             <td>{{ grower.csg_code }}</td>
         </tr>
+        {% else %}
+        <tr>
+            <td colspan="6">No se encontraron productores en la base de datos.</td>
+        </tr>
         {% endfor %}
     </tbody>
 </table>
