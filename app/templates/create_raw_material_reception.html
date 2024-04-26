@@ -11,7 +11,7 @@
       if (category === 'success') {
           $('.modal-body').html('<div class="alert alert-success" role="alert">' + message + '</div>');
           $('.modal-footer').html('<button type="button" class="btn btn-secondary" onclick="window.location.href=\'{{ url_for('index') }}\'">Home</button>' +
-                                  '<button type="button" class="btn btn-primary" onclick="window.location.href=\'{{ url_for('create_lot', reception_id=reception_id) }}\'">Crear Lote</button>');
+                                  '<button type="button" class="btn btn-primary" onclick="window.location.href=\'{{ url_for('create_lot', reception_id=reception_id) if reception_id else '#'}}\'">Crear Lote</button>');
       } else if (category === 'warning') {
           $('.modal-body').html('<div class="alert alert-warning" role="alert">' + message + '</div>');
           $('.modal-footer').html('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>');

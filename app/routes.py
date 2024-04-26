@@ -63,7 +63,6 @@ def add_user():
         ) # type: ignore
         db.session.add(user)
         db.session.commit()
-        flash('User has been added!', 'success')
         return redirect(url_for('list_users'))
     return render_template('add_user.html', title='Add User', form=form)
 
@@ -81,7 +80,6 @@ def add_role():
         role = Role(name=form.name.data, description=form.description.data) # type: ignore
         db.session.add(role)
         db.session.commit()
-        flash('Role added successfully!')
         return redirect(url_for('list_roles'))
     return render_template('add_role.html', form=form)
 
@@ -95,7 +93,6 @@ def assign_role():
         if role not in user.roles:
             user.roles.append(role)
             db.session.commit()
-            flash('Role assigned successfully!', 'success')
         else:
             flash('This user already has the assigned role.', 'warning')
         return redirect(url_for('assign_role'))
@@ -115,7 +112,6 @@ def add_area():
         area = Area(name=form.name.data, description=form.description.data) # type: ignore
         db.session.add(area)
         db.session.commit()
-        flash('Area added successfully!')
         return redirect(url_for('list_areas'))
     return render_template('add_area.html', form=form)
 
@@ -129,7 +125,6 @@ def assign_area():
         if area not in user.areas:
             user.areas.append(area)
             db.session.commit()
-            flash('Area assigned successfully!', 'success')
         else:
             flash('This user already has the assigned Area.', 'warning')
         return redirect(url_for('assign_area'))
@@ -153,7 +148,6 @@ def add_client():
             comuna=form.comuna.data) # type: ignore
         db.session.add(client)
         db.session.commit()
-        flash('Cliente agregado correctamente.')
         return redirect(url_for('list_clients'))
     return render_template('add_client.html', title='Add Client', form=form)
 
@@ -174,7 +168,6 @@ def add_grower():
             csg_code=form.csg_code.data) # type: ignore
         db.session.add(grower)
         db.session.commit()
-        flash('Productor agregado correctamente.')
         return redirect(url_for('list_growers'))
     return render_template('add_grower.html', form=form)
 
@@ -193,7 +186,6 @@ def add_variety():
             name=form.name.data) # type: ignore
         db.session.add(variety)
         db.session.commit()
-        flash('Variedad agregada correctamente.')
         return redirect(url_for('list_varieties'))
     return render_template('add_variety.html', form=form)
 
@@ -213,7 +205,6 @@ def add_raw_material_packaging():
             tare=form.tare.data) # type: ignore
         db.session.add(rmp)
         db.session.commit()
-        flash('Envase agregado correctamente.')
         return redirect(url_for('list_raw_material_packagings'))
     return render_template('add_raw_material_packaging.html', form=form)
 
@@ -227,6 +218,7 @@ def list_raw_material_packagings():
 @login_required
 def create_raw_material_reception():
     form = CreateRawMaterialReceptionForm()
+    reception_id = None
     if form.validate_on_submit():
         reception = RawMaterialReception(
             waybill=form.waybill.data,
@@ -245,6 +237,7 @@ def create_raw_material_reception():
             reception.clients.append(selected_client)
 
         db.session.add(reception)
+        reception_id = reception.id
         db.session.commit()
         flash('Recepción de Materia Prima creada exitosamente.', 'success')
         session['can_create_lot'] = True
