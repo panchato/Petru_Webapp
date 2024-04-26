@@ -111,7 +111,7 @@ class Client(BaseModel):
 
 class RawMaterialReception(BaseModel):
     __tablename__ = 'rawmaterialreceptions'
-    waybill = db.Column(db.String(64), nullable=False)
+    waybill = db.Column(db.Integer, nullable=False)
     date = db.Column(db.Date, default=date.today, nullable=False)
     time = db.Column(db.Time, default=lambda: datetime.utcnow().time(), nullable=False)
     truck_plate = db.Column(db.String(6), nullable=False)

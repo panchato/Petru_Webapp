@@ -6,15 +6,20 @@
         {% if messages %}
         var category = "{{ messages[0][0] }}";
         var message = "{{ messages[0][1] }}";
-        $('.modal-body').text(message);
+
+        // HTML structure for the modal content based on the message category
         if (category === 'success') {
-            $('.modal-footer').html('<button type="button" class="btn btn-secondary" onclick="window.location.href=\'/\'">Close</button>' +
-                                    '<button type="button" class="btn btn-primary" onclick="window.location.href=\'{{ url_for('create_lot', reception_id=reception_id) }}\'">Create Another Lot</button>');
-            $('#errorModal').modal({backdrop: 'static', keyboard: false});
+            $('.modal-body').html('<div class="alert alert-success" role="alert">' + message + '</div>');
+            $('.modal-footer').html('<button type="button" class="btn btn-secondary" onclick="window.location.href=\'{{ url_for('index') }}\'">Home</button>' +
+                                    '<button type="button" class="btn btn-primary" onclick="window.location.href=\'{{ url_for('create_lot', reception_id=reception_id) }}\'">Crear otro Lote</button>');
+        } else if (category === 'warning') {
+            $('.modal-body').html('<div class="alert alert-warning" role="alert">' + message + '</div>');
+            $('.modal-footer').html('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>');
         } else {
+            $('.modal-body').text(message);
             $('.modal-footer').html('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>');
         }
-        $('#errorModal').modal('show');
+        $('#Modal').modal('show');
         {% endif %}
         {% endwith %}
     });
@@ -34,16 +39,16 @@
     <div class="form-group">{{ form.lot_number.label }} {{ form.lot_number(class="form-control") }}</div><br>
     <div>{{ form.submit(class="btn btn-primary") }}</div><br>
 </form>
-<!-- Error Modal -->
-<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+<!-- Modal -->
+<div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                <h5 class="modal-title" id="ModalLabel">Mensaje del Sistema</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-            <!-- Error message will be injected here -->
+            <!-- Message will be injected here -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -53,3 +58,4 @@
 </div>
 
 {% endblock %}
+

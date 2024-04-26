@@ -93,6 +93,9 @@
                                 {% if current_user.has_role('Admin') or (current_user.from_area('Materia Prima') and current_user.has_role('Contribuidor')) %}
                                 <li><a class="dropdown-item" href="{{ url_for('create_raw_material_reception') }}">Crear Recepción</a></li>
                                 {% endif %}
+                                {% if current_user.has_role('Admin') or (current_user.from_area('Materia Prima') and current_user.has_role('Contribuidor')) %}
+                                <li><a class="dropdown-item" href="{{ url_for('list_rmrs') }}">Listado de Recepciones</a></li>
+                                {% endif %}
                                 {% if current_user.has_role('Admin') or (current_user.from_area('Materia Prima') and current_user.has_role('Lector')) %}
                                 <li><a class="dropdown-item" href="{{ url_for('list_lots') }}">Listado de Lotes</a></li>
                                 {% endif %}

@@ -71,7 +71,7 @@ class AddRawMaterialPackagingForm(FlaskForm):
     submit = SubmitField('Agregar Envase de MP')
 
 class CreateRawMaterialReceptionForm(FlaskForm):
-    waybill = StringField('Guía Nº', validators=[DataRequired(), Length(max=64)])
+    waybill = IntegerField('Guía Nº', validators=[DataRequired()])
     date = DateField('Fecha', validators=[DataRequired()], format='%Y-%m-%d')
     time = TimeField('Hora', validators=[DataRequired()], format='%H:%M')
     truck_plate = StringField('Patente', validators=[DataRequired(), Length(max=6)])
@@ -98,13 +98,12 @@ class CreateLotForm(FlaskForm):
     rawmaterialpackaging_id = SelectField('Tipo de Envases', coerce=int, validators=[DataRequired()])
     packagings_quantity = IntegerField('Cantidad de Envases', validators=[DataRequired()])
     lot_number = IntegerField('Número de Lote', validators=[DataRequired()])
+    submit = SubmitField('Crear Lote')
 
     def __init__(self, *args, **kwargs):
         super(CreateLotForm, self).__init__(*args, **kwargs)
         self.variety_id.choices = [(v.id, v.name) for v in Variety.query.all()]
         self.rawmaterialpackaging_id.choices = [(p.id, p.name) for p in RawMaterialPackaging.query.all()]
-
-    submit = SubmitField('Crear Lote')
 
 class FullTruckWeightForm(FlaskForm):
     loaded_truck_weight = FloatField('Loaded Truck Weight', validators=[DataRequired()])

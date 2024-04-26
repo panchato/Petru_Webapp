@@ -10,11 +10,11 @@
         $('.modal-body').text(message);
         if (category === 'success') {
             $('.modal-footer').html('<button type="button" class="btn btn-secondary" onclick="window.location.href=\'/\'">Close</button>');
-            $('#errorModal').modal({backdrop: 'static', keyboard: false});
+            $('#Modal').modal({backdrop: 'static', keyboard: false});
         } else {
             $('.modal-footer').html('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>');
         }
-        $('#errorModal').modal('show');
+        $('#Modal').modal('show');
         {% endif %}
         {% endwith %}
     });
@@ -69,11 +69,11 @@
     </div>
 </form>
 <!-- Error Modal -->
-<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+<div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                <h5 class="modal-title" id="ModalLabel">Mensaje del Sistema</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">

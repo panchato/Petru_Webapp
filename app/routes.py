@@ -1,7 +1,7 @@
 import qrcode
 import os
 import uuid
-from flask import render_template, redirect, url_for, flash, send_file, request
+from flask import render_template, redirect, url_for, flash, send_file, request, session
 from flask_login import login_user, logout_user, login_required, current_user
 from app.forms import LoginForm, AddUserForm, AddRoleForm, AddAreaForm, AssignRoleForm, AssignAreaForm, AddClientForm, AddGrowerForm, AddVarietyForm, AddRawMaterialPackagingForm, CreateRawMaterialReceptionForm, CreateLotForm, FullTruckWeightForm, LotQCForm, FumigationForm
 from app.models import User, Role, Area, Client, Grower, Variety, RawMaterialPackaging, RawMaterialReception, Lot, FullTruckWeight, LotQC, Fumigation
@@ -246,39 +246,46 @@ def create_raw_material_reception():
 
         db.session.add(reception)
         db.session.commit()
-        flash('Raw Material Reception added successfully!')
-        return redirect(url_for('create_lot', reception_id=reception.id))
+        flash('Recepción de Materia Prima creada exitosamente.', 'success')
+        session['can_create_lot'] = True
+        session['reception_id'] = reception.id
 
     return render_template('create_raw_material_reception.html', form=form)
+
+@app.route('/list_rmrs')
+@login_required
+def list_rmrs():
+    receptions = RawMaterialReception.query.all()
+    return render_template('list_rmrs.html', receptions=receptions)
 
 @app.route('/create_lot/<int:reception_id>', methods=['GET', 'POST'])
 @login_required
 def create_lot(reception_id):
+    if not session.get('can_create_lot') or session.get('reception_id') != reception_id:
+        return redirect(url_for('index'))
+    
     form = CreateLotForm()
     reception = RawMaterialReception.query.get_or_404(reception_id)
 
     if request.method == 'GET':
-        form.grower_name.data = ', '.join([grower.name for grower in reception.growers])
-        form.client_name.data = ', '.join([client.name for client in reception.clients])
+        form.grower_name.data = ', '.join(grower.name for grower in reception.growers)
+        form.client_name.data = ', '.join(client.name for client in reception.clients)
         form.waybill.data = reception.waybill
 
     if form.validate_on_submit():
-        existing_lot = Lot.query.filter_by(lot_number=form.lot_number.data).first()
-        if existing_lot:
-            flash('El Nº de Lote ya existe. Por favor, use un Nº de Lote distinto.', 'warning')
-            return render_template('create_lot.html', form=form, reception_id=reception_id)
-
-        lot = Lot(
-            rawmaterialreception_id=reception_id,
-            variety_id=form.variety_id.data,
-            rawmaterialpackaging_id=form.rawmaterialpackaging_id.data,
-            packagings_quantity=form.packagings_quantity.data,
-            lot_number=form.lot_number.data
-        ) # type: ignore
-        db.session.add(lot)
-        db.session.commit()
-        flash(f'Lote Nº {form.lot_number.data} creado exitosamente.', 'success')
-        return render_template('create_lot.html', form=form, reception_id=reception_id)
+        if Lot.query.filter_by(lot_number=form.lot_number.data).first():
+            flash(f'El Lote {form.lot_number.data:03} ya existe. Por favor, use un Lote distinto.', 'warning')
+        else:
+            lot = Lot(
+                rawmaterialreception_id=reception_id,
+                variety_id=form.variety_id.data,
+                rawmaterialpackaging_id=form.rawmaterialpackaging_id.data,
+                packagings_quantity=form.packagings_quantity.data,
+                lot_number=form.lot_number.data
+            ) # type: ignore
+            db.session.add(lot)
+            db.session.commit()
+            flash(f'Lote {form.lot_number.data} creado exitosamente.', 'success')
 
     return render_template('create_lot.html', form=form, reception_id=reception_id)
 
