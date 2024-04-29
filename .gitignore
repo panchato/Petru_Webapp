@@ -59,8 +59,6 @@ cover/
 *.pot
 
 # Flask stuff:
-static/
-instance/
 migrations/
 .webassets-cache
 
