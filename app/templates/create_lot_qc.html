@@ -4,9 +4,9 @@
     $(document).ready(function() {
       {% with messages = get_flashed_messages() %}
         {% if messages %}
-          var errorMessage = "{{ messages[0] }}"; // Taking the first message for simplicity
-          $('.modal-body').text(errorMessage); // Set the error message
-          $('#errorModal').modal('show'); // Show the modal
+          var errorMessage = "{{ messages[0] }}";
+          $('.modal-body').text(errorMessage);
+          $('#errorModal').modal('show');
         {% endif %}
       {% endwith %}
     });
@@ -172,19 +172,18 @@
 <!-- Error Modal -->
 <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="errorModalLabel">Error</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <!-- Error message will be injected here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
         </div>
-        <div class="modal-body">
-          <!-- Error message will be injected here -->
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>          
-        </div>
-      </div>
     </div>
 </div>
 {% endblock %}

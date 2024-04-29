@@ -1,8 +1,7 @@
-<!-- list_growers.html -->
 {% extends "base.html" %}
 {% block content %}
 <h2>Listado de Productores</h2>
-<table class="table">
+<table class="table table-striped">
     <thead>
         <tr>
             <th scope="col">#</th>
@@ -17,7 +16,11 @@
             <th scope="row">{{ loop.index }}</th>
             <td>{{ grower.name }}</td>
             <td>{{ grower.tax_id }}</td>
-            <td>{{ grower.vsg_code }}</td>
+            <td>{{ grower.csg_code }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="6">No se encontraron productores en la base de datos.</td>
         </tr>
         {% endfor %}
     </tbody>

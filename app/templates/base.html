@@ -17,6 +17,36 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    {% if current_user.is_authenticated and current_user.has_role('Admin') %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Usuarios
+                        </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ url_for('add_user') }}">Agregar Nuevo Usuario</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('list_users') }}">Listado de Usuarios</a></li>
+                            </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Roles
+                        </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ url_for('add_role') }}">Agregar Nuevo Rol</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('list_roles') }}">Listado de Roles</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('assign_role') }}">Asignar Rol a Usuario</a></li>
+                            </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Areas
+                        </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ url_for('add_area') }}">Agregar Nueva Area</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('list_areas') }}">Listado de Areas</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('assign_area') }}">Asignar Area a Usuario</a></li>
+                            </ul>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Clientes
@@ -53,24 +83,36 @@
                                 <li><a class="dropdown-item" href="{{ url_for('list_raw_material_packagings') }}">Listado de Envases MP</a></li>
                             </ul>
                     </li>
+                    {% endif %}
+                    {% if current_user.is_authenticated and current_user.is_active and not current_user.is_external and (current_user.has_role('Admin') or current_user.from_area('MateriaPrima')) %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Recepciones y Lotes
                         </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{{ url_for('add_raw_material_reception') }}">Crear Recepción</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('select_lot_for_weight_registration') }}">Lotes por Pesar</a></li>
+                                {% if current_user.has_role('Admin') or (current_user.from_area('Materia Prima') and current_user.has_role('Contribuidor')) %}
+                                <li><a class="dropdown-item" href="{{ url_for('create_raw_material_reception') }}">Crear Recepción</a></li>
+                                {% endif %}
+                                {% if current_user.has_role('Admin') or (current_user.from_area('Materia Prima') and current_user.has_role('Contribuidor')) %}
+                                <li><a class="dropdown-item" href="{{ url_for('list_rmrs') }}">Listado de Recepciones</a></li>
+                                {% endif %}
+                                {% if current_user.has_role('Admin') or (current_user.from_area('Materia Prima') and current_user.has_role('Lector')) %}
+                                <li><a class="dropdown-item" href="{{ url_for('list_lots') }}">Listado de Lotes</a></li>
+                                {% endif %}
                             </ul>
                     </li>
+                    {% endif %}
+                    {% if current_user.is_authenticated %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             QC Lotes
                         </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{{ url_for('create_lot_qc') }}">Crear QC Lotes</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('lot_qc_reports') }}">Listado de QC Lotes</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('list_lot_qc_reports') }}">Listado de QC Lotes</a></li>
                             </ul>
                     </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>

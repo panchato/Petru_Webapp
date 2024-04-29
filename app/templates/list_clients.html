@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% block content %}
 <h2>Listado de Clientes</h2>
 <table class="table table-striped">
@@ -20,6 +19,10 @@
             <td>{{ client.tax_id }}</td>
             <td>{{ client.address }}</td>
             <td>{{ client.comuna }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="6">No se encontraron clientes en la base de datos.</td>
         </tr>
         {% endfor %}
     </tbody>

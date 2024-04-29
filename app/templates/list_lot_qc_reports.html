@@ -22,6 +22,10 @@
                     <a href="{{ url_for('view_lot_qc_report', report_id=record.id) }}" class="btn btn-primary btn-sm">View Report</a>
                 </td>
             </tr>
+            {% else %}
+            <tr>
+                <td colspan="6">No se encontraron análisis de calidad en la base de datos.</td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
