@@ -152,7 +152,7 @@ class LotQCForm(FlaskForm):
         if field.data != total_color_weight:
             raise ValidationError('El peso de pulpa debe ser igual a la suma de los pesos de los colores.')
         
-class LSampleQCForm(FlaskForm):
+class SampleQCForm(FlaskForm):
     grower = StringField('Productor', validators=[DataRequired(), Length(max=64)])
     brought_by = StringField('Muestra traida por', validators=[DataRequired(), Length(max=64)])
     analyst = StringField('Analista', validators=[DataRequired(), Length(max=64)])
