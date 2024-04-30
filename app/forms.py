@@ -184,7 +184,6 @@ class SampleQCForm(FlaskForm):
     yellow = FloatField('Amarilla', validators=[InputRequired()])
     inshell_image = FileField('Imagen de Cáscara', validators=[FileRequired(), FileAllowed(['jpg', 'png', 'jpeg'], 'Imágenes Solamente!')])
     shelled_image = FileField('Imagen de Pulpa', validators=[FileRequired(), FileAllowed(['jpg', 'png', 'jpeg'], 'Imágenes Solamente!')])
-    lot_id = SelectField('Lote', coerce=int, validators=[DataRequired()])
     submit = SubmitField('Crear QC')
 
     def validate_shelled_weight(self, field):
