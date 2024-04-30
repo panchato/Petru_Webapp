@@ -482,7 +482,7 @@ def create_sample_qc():
             new_sample_qc.inshell_image_path = inshell_image_path
             new_sample_qc.shelled_image_path = shelled_image_path
             db.session.add(new_sample_qc)
-            db.session.commit())
+            db.session.commit()
         else:
             flash('Failed to save images. Please try again.', 'error')
 
