@@ -152,6 +152,46 @@ class LotQCForm(FlaskForm):
         if field.data != total_color_weight:
             raise ValidationError('El peso de pulpa debe ser igual a la suma de los pesos de los colores.')
         
+class LSampleQCForm(FlaskForm):
+    grower = StringField('Productor', validators=[DataRequired(), Length(max=64)])
+    brought_by = StringField('Muestra traida por', validators=[DataRequired(), Length(max=64)])
+    analyst = StringField('Analista', validators=[DataRequired(), Length(max=64)])
+    date = DateField('Fecha', validators=[DataRequired()], format='%Y-%m-%d')
+    time = TimeField('Hora', validators=[DataRequired()], format='%H:%M')
+    units = IntegerField('Unidades Analizadas', validators=[InputRequired()])
+    inshell_weight = FloatField('Peso Con Cáscara', validators=[InputRequired()])
+    shelled_weight = FloatField('Peso de Pulpa', validators=[InputRequired()])
+    yieldpercentage = FloatField('Porcentaje de Pulpa', validators=[InputRequired()])
+    lessthan30 = IntegerField('Menos de 30', validators=[InputRequired()])
+    between3032 = IntegerField('30/32', validators=[InputRequired()])
+    between3234 = IntegerField('32/34', validators=[InputRequired()])
+    between3436 = IntegerField('34/36', validators=[InputRequired()])
+    morethan36 = IntegerField('Más de 36', validators=[InputRequired()])
+    broken_walnut = IntegerField('Cáscara Partida', validators=[InputRequired()])
+    split_walnut = IntegerField('Casco Abierto', validators=[InputRequired()])
+    light_stain = IntegerField('Mancha Leve', validators=[InputRequired()])
+    serious_stain = IntegerField('Mancha Grave', validators=[InputRequired()])
+    adhered_hull = IntegerField('Pelón Adherido', validators=[InputRequired()])
+    shrivel = IntegerField('Nuez Reseca', validators=[InputRequired()])
+    empty = IntegerField('Nuez Vana', validators=[InputRequired()])
+    insect_damage = IntegerField('Daño de Insecto', validators=[InputRequired()])
+    inactive_fungus = IntegerField('Hongo Inactivo', validators=[InputRequired()])
+    active_fungus = IntegerField('Hongo Activo', validators=[InputRequired()])
+    extra_light = FloatField('Extra Light', validators=[InputRequired()])
+    light = FloatField('Light', validators=[InputRequired()])
+    light_amber = FloatField('Light Amber', validators=[InputRequired()])
+    amber = FloatField('Amber', validators=[InputRequired()])
+    yellow = FloatField('Amarilla', validators=[InputRequired()])
+    inshell_image = FileField('Imagen de Cáscara', validators=[FileRequired(), FileAllowed(['jpg', 'png', 'jpeg'], 'Imágenes Solamente!')])
+    shelled_image = FileField('Imagen de Pulpa', validators=[FileRequired(), FileAllowed(['jpg', 'png', 'jpeg'], 'Imágenes Solamente!')])
+    lot_id = SelectField('Lote', coerce=int, validators=[DataRequired()])
+    submit = SubmitField('Crear QC')
+
+    def validate_shelled_weight(self, field):
+        total_color_weight = self.extra_light.data + self.light.data + self.light_amber.data + self.amber.data # type: ignore
+        if field.data != total_color_weight:
+            raise ValidationError('El peso de pulpa debe ser igual a la suma de los pesos de los colores.')
+        
 class FumigationForm(FlaskForm):
     work_order = StringField('Orden de Trabajo', validators=[DataRequired()])
     start_date = DateField('Fecha de Inicio', validators=[DataRequired()], format='%d-%m-%Y')

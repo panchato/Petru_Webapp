@@ -3,8 +3,8 @@ import os
 import uuid
 from flask import render_template, redirect, url_for, flash, send_file, request, session
 from flask_login import login_user, logout_user, login_required, current_user
-from app.forms import LoginForm, AddUserForm, AddRoleForm, AddAreaForm, AssignRoleForm, AssignAreaForm, AddClientForm, AddGrowerForm, AddVarietyForm, AddRawMaterialPackagingForm, CreateRawMaterialReceptionForm, CreateLotForm, FullTruckWeightForm, LotQCForm, FumigationForm
-from app.models import User, Role, Area, Client, Grower, Variety, RawMaterialPackaging, RawMaterialReception, Lot, FullTruckWeight, LotQC, Fumigation
+from app.forms import LoginForm, AddUserForm, AddRoleForm, AddAreaForm, AssignRoleForm, AssignAreaForm, AddClientForm, AddGrowerForm, AddVarietyForm, AddRawMaterialPackagingForm, CreateRawMaterialReceptionForm, CreateLotForm, FullTruckWeightForm, LotQCForm, SampleQCForm, FumigationForm
+from app.models import User, Role, Area, Client, Grower, Variety, RawMaterialPackaging, RawMaterialReception, Lot, FullTruckWeight, LotQC, SampleQC, Fumigation
 from app import app, db, bcrypt
 from io import BytesIO
 from datetime import datetime
@@ -417,11 +417,94 @@ def create_lot_qc():
 
     return render_template('create_lot_qc.html', form=form)
 
+@app.route('/create_sample_qc', methods=['GET', 'POST'])
+@login_required
+def create_sample_qc():
+    form = SampleQCForm()
+    if form.validate_on_submit():
+        new_sample_qc = LotQC(
+            grower=form.grower.data,
+            brought_by=brought_by.form.data,
+            analyst=form.analyst.data,
+            date=form.date.data,
+            time=form.time.data,
+            units=form.units.data,
+            inshell_weight=form.inshell_weight.data,
+            shelled_weight=form.shelled_weight.data,
+            yieldpercentage=form.yieldpercentage.data,
+            lessthan30=form.lessthan30.data,
+            between3032=form.between3032.data,
+            between3234=form.between3234.data,
+            between3436=form.between3436.data,
+            morethan36=form.morethan36.data,
+            broken_walnut=form.broken_walnut.data,
+            split_walnut=form.split_walnut.data,
+            light_stain=form.light_stain.data,
+            serious_stain=form.serious_stain.data,
+            adhered_hull=form.adhered_hull.data,
+            shrivel=form.shrivel.data,
+            empty=form.empty.data,
+            insect_damage=form.insect_damage.data,
+            inactive_fungus=form.inactive_fungus.data,
+            active_fungus=form.active_fungus.data,
+            extra_light=form.extra_light.data,
+            light=form.light.data,
+            light_amber=form.light_amber.data,
+            amber=form.amber.data,
+            yellow=form.yellow.data
+        ) # type: ignore
+
+        def save_image(uploaded_file, sample_type, grower_name):
+            if uploaded_file:
+                original_name = secure_filename(uploaded_file.filename)
+                grower_name = form.grower.data
+                timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
+                sanitized_grower_name = secure_filename(grower_name).replace(' ', '_')
+                unique_name = f"{sanitized_grower_name}_{sample_type}_{timestamp}"
+                relative_path = os.path.join('images', unique_name)
+                full_path = os.path.join(app.config['UPLOAD_PATH_IMAGE'], unique_name)
+                try:
+                    uploaded_file.save(full_path)
+                    return relative_path
+                except Exception as e:
+                    app.logger.error(f"Failed to save image: {e}")
+                    return None
+            else:
+                return None
+
+
+        # Image upload handling
+        inshell_image_path = save_image(form.inshell_image.data, "inshell", form.grower.data)
+        shelled_image_path = save_image(form.shelled_image.data, "shelled", form.grower.data)
+
+        
+        if inshell_image_path and shelled_image_path:
+            new_sample_qc.inshell_image_path = inshell_image_path
+            new_sample_qc.shelled_image_path = shelled_image_path
+            db.session.add(new_sample_qc)
+            db.session.commit())
+        else:
+            flash('Failed to save images. Please try again.', 'error')
+
+        return redirect(url_for('index'))
+    else:
+        for fieldName, errorMessages in form.errors.items():
+            for err in errorMessages:
+                flash(f'{err}', 'error')
+
+    return render_template('create_sample_qc.html', form=form)
+
 @app.route('/list_lot_qc_reports')
 @login_required
 def list_lot_qc_reports():
     lot_qc_reports = LotQC.query.all()
     return render_template('list_lot_qc_reports.html', lot_qc_records=lot_qc_reports)
+
+@app.route('/list_sample_qc_reports')
+@login_required
+def list_sample_qc_reports():
+    sample_qc_reports = SampleQC.query.all()
+    return render_template('list_sample_qc_reports.html', sample_qc_records=sample_qc_reports)
 
 @app.route('/view_lot_qc_report/<int:report_id>')
 @login_required
@@ -433,6 +516,13 @@ def view_lot_qc_report(report_id):
     growers = reception.growers
 
     return render_template('view_lot_qc_report.html', report=report, reception=reception, clients=clients, growers=growers)
+
+@app.route('/view_sample_qc_report/<int:report_id>')
+@login_required
+def view_sample_qc_report(report_id):
+    report = SampleQC.query.get_or_404(report_id)
+
+    return render_template('view_sample_qc_report.html', report=report)
 
 @app.route('/create_fumigation', methods=['GET', 'POST'])
 @login_required
