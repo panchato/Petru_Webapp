@@ -187,7 +187,7 @@ class LotQC(BaseModel):
     shelled_image_path = db.Column(db.String(255), nullable=True)
 
 class SampleQC(BaseModel):
-    __tablename__ = 'lotsqc'
+    __tablename__ = 'samplesqc'
     grower = db.Column(db.String(64), unique=False, nullable=True)
     brought_by = db.Column(db.String(64), unique=False, nullable=True)
     analyst = db.Column(db.String(64), unique=False, nullable=True)
