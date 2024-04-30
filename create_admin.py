@@ -17,7 +17,7 @@ def create_admin_user():
 
         if admin_user is None:
             admin_password = getpass("Enter admin password: ")
-            password_hash = bcrypt.generate_password_hash(admin_password)
+            password_hash = bcrypt.generate_password_hash(admin_password).decode('utf8')
             admin_name = input("Enter admin name: ")
             admin_last_name = input("Enter admin last name: ")
             admin_phone = input("Enter admin phone number: ")
