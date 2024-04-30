@@ -422,7 +422,7 @@ def create_lot_qc():
 def create_sample_qc():
     form = SampleQCForm()
     if form.validate_on_submit():
-        new_sample_qc = LotQC(
+        new_sample_qc = SampleQC(
             grower=form.grower.data,
             brought_by=form.brought_by.data,
             analyst=form.analyst.data,
