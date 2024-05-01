@@ -154,7 +154,7 @@
                         <tr>
                             <td>Peso de Pulpa</td>
                             <td>{{ report.shelled_weight }}</td>
-                            <td>{{ report.yieldpercentage }}</td>
+                            <td>{{ report.yieldpercentage round(2) }}%</td>
                         </tr>
                         <tr>
                             <td>Extra Light</td>
@@ -164,22 +164,22 @@
                         <tr>
                             <td>Light</td>
                             <td>{{ report.light }}</td>
-                            <td>xx%</td>
+                            <td>{{ (report.light / report.shelled_weight * 100) | round(2) if report.shelled_weight != 0 else '0.00' }}%</td>
                         </tr>
                         <tr>
                             <td>Light Amber</td>
                             <td>{{ report.light_amber }}</td>
-                            <td>xx%</td>
+                            <td>{{ (report.light_amber / report.shelled_weight * 100) | round(2) if report.shelled_weight != 0 else '0.00' }}%</td>
                         </tr>
                         <tr>
                             <td>Amber</td>
                             <td>{{ report.amber }}</td>
-                            <td>xx%</td>
+                            <td>{{ (report.amber / report.shelled_weight * 100) | round(2) if report.shelled_weight != 0 else '0.00' }}%</td>
                         </tr>
                         <tr>
-                            <td>Amber</td>
+                            <td>Amarilla</td>
                             <td>{{ report.yellow }}</td>
-                            <td>xx%</td>
+                            <td>{{ (report.yellow / report.shelled_weight * 100) | round(2) if report.shelled_weight != 0 else '0.00' }}%</td>
                         </tr>
                     </tbody>
                 </table>
