@@ -20,10 +20,10 @@ class Config(object):
     UPLOAD_PATH_PDF = os.path.join(basedir, 'static', 'pdf')
 
     # Digital Ocean Spaces 
-    DO_SPACES_REGION = os.getenv('DO_SPACES_REGION')
-    DO_SPACES_BUCKET = os.getenv('DO_SPACES_BUCKET')
-    DO_SPACES_ENDPOINT_URL = os.getenv('DO_SPACES_ENDPOINT_URL')
-    DO_SPACES_CDN_BASE_URL = os.getenv('DO_SPACES_CDN_BASE_URL')
+    DO_SPACES_REGION='sfo3'
+    DO_SPACES_BUCKET='petru-space-bucket'
+    DO_SPACES_ENDPOINT_URL='https://sfo3.digitaloceanspaces.com'
+    DO_SPACES_CDN_BASE_URL = 'https://petru-space-bucket.sfo3.cdn.digitaloceanspaces.com'
     AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 
