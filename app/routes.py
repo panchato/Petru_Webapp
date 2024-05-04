@@ -1,6 +1,7 @@
 import qrcode
 import os
 import uuid
+import boto3
 from flask import render_template, redirect, url_for, flash, send_file, request, session
 from flask_login import login_user, logout_user, login_required, current_user
 from app.forms import LoginForm, AddUserForm, AddRoleForm, AddAreaForm, AssignRoleForm, AssignAreaForm, AddClientForm, AddGrowerForm, AddVarietyForm, AddRawMaterialPackagingForm, CreateRawMaterialReceptionForm, CreateLotForm, FullTruckWeightForm, LotQCForm, SampleQCForm, FumigationForm
@@ -454,28 +455,42 @@ def create_sample_qc():
             yellow=form.yellow.data
         ) # type: ignore
 
-        def save_image(uploaded_file, sample_type, grower_name):
+        def save_image_to_spaces(uploaded_file, sample_type, grower_name):
             if uploaded_file:
                 original_name = secure_filename(uploaded_file.filename)
-                grower_name = form.grower.data
                 timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
                 sanitized_grower_name = secure_filename(grower_name).replace(' ', '_')
-                unique_name = f"{sanitized_grower_name}_{sample_type}_{timestamp}"
-                relative_path = os.path.join('images', unique_name)
-                full_path = os.path.join(app.config['UPLOAD_PATH_IMAGE'], unique_name)
+                unique_name = f"{sanitized_grower_name}_{sample_type}_{timestamp}.{original_name.rsplit('.', 1)[1]}"
+                s3_path = f"images/{unique_name}"  # Adjust the path as needed
+
                 try:
-                    uploaded_file.save(full_path)
-                    return relative_path
+                    s3_client = boto3.client(
+                        's3',
+                        region_name=app.config['DO_SPACES_REGION'],
+                        endpoint_url=app.config['DO_SPACES_ENDPOINT_URL'],
+                        aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
+                        aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY']
+                    )
+                    s3_client.upload_fileobj(
+                        uploaded_file,
+                        app.config['DO_SPACES_BUCKET'],
+                        s3_path,
+                        ExtraArgs={
+                            'ACL': 'public-read',  # Ensure the file is publicly accessible if needed
+                            'ContentType': uploaded_file.content_type  # Set the correct content type
+                        }
+                    )
+                    return f"{app.config['DO_SPACES_CDN_BASE_URL']}/{s3_path}"
                 except Exception as e:
-                    app.logger.error(f"Failed to save image: {e}")
+                    app.logger.error(f"Failed to upload image to DigitalOcean Spaces: {e}")
                     return None
             else:
                 return None
 
 
         # Image upload handling
-        inshell_image_path = save_image(form.inshell_image.data, "inshell", form.grower.data)
-        shelled_image_path = save_image(form.shelled_image.data, "shelled", form.grower.data)
+        inshell_image_path = save_image_to_spaces(form.inshell_image.data, "inshell", form.grower.data)
+        shelled_image_path = save_image_to_spaces(form.shelled_image.data, "shelled", form.grower.data)
 
         
         if inshell_image_path and shelled_image_path:
