@@ -19,6 +19,7 @@ class Config(object):
     UPLOAD_PATH_IMAGE = os.path.join(basedir, 'static', 'images')
     UPLOAD_PATH_PDF = os.path.join(basedir, 'static', 'pdf')
 
+    # Digital Ocean Spaces 
     DO_SPACES_REGION = os.getenv('DO_SPACES_REGION')
     DO_SPACES_BUCKET = os.getenv('DO_SPACES_BUCKET')
     DO_SPACES_ENDPOINT_URL = os.getenv('DO_SPACES_ENDPOINT_URL')
