@@ -220,15 +220,15 @@
     </div>
     <br>
     <br>
-
     {% if report.inshell_image_path %}
     <div class="container">
-        <img src="{{ url_for('static', filename=report.inshell_image_path) }}" alt="Inshell Image" style="max-width: 100%; height: auto;">
+        <img src="{{ report.inshell_image_path }}" alt="Inshell Image" style="max-width: 100%; height: auto;">
     </div>
     {% endif %}
+    <br>
     {% if report.shelled_image_path %}
     <div class="container">
-        <img src="{{ url_for('static', filename=report.shelled_image_path) }}" alt="Shelled Image" style="max-width: 100%; height: auto;">
+        <img src="{{ report.shelled_image_path }}" alt="Shelled Image" style="max-width: 100%; height: auto;">
     </div>
     {% endif %}
 
