@@ -2,17 +2,73 @@
 {% block content %}
 <script>
     $(document).ready(function() {
-      {% with messages = get_flashed_messages() %}
+        {% with messages = get_flashed_messages() %}
         {% if messages %}
-          var errorMessage = "{{ messages[0] }}";
-          $('.modal-body').text(errorMessage);
-          $('#errorModal').modal('show');
+        var errorMessage = "{{ messages[0] }}";
+        $('.modal-body').text(errorMessage);
+        $('#errorModal').modal('show');
         {% endif %}
-      {% endwith %}
+        {% endwith %}
     });
-    </script>
-
-<div class="container">
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        const inputs = {
+            inshellWeight: document.getElementById('inshell_weight'),
+            shelledWeight: document.getElementById('shelled_weight'),
+            yieldPercentage: document.getElementById('yieldpercentage'),
+            colors: [
+                document.getElementById('extra_light'),
+                document.getElementById('light'),
+                document.getElementById('light_amber'),
+                document.getElementById('amber'),
+                document.getElementById('yellow')
+            ],
+            sizes: [
+                document.getElementById('lessthan30'),
+                document.getElementById('between3032'),
+                document.getElementById('between3234'),
+                document.getElementById('between3436'),
+                document.getElementById('morethan36')
+            ],
+            units: document.getElementById('units')
+        };
+    
+        function calculateYield() {
+            const { inshellWeight, shelledWeight, yieldPercentage } = inputs;
+            const weight = parseFloat(shelledWeight.value) || 0;
+            const inshell = parseFloat(inshellWeight.value) || 0;
+            const yieldValue = inshell > 0 ? (weight / inshell * 100).toFixed(2) : 0;
+            yieldPercentage.value = yieldValue;
+        }
+    
+        function validateTotal(expected, elements, message) {
+            const total = elements.reduce((sum, el) => sum + (parseFloat(el.value) || 0), 0);
+            const isValid = total === parseFloat(expected.value);
+            if (!isValid) alert(message);
+            return isValid;
+        }
+    
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(event) {
+            // Ensure calculations are up-to-date
+            calculateYield();
+            const isWeightsValid = validateTotal(inputs.shelledWeight, inputs.colors, "La suma de los colores debe ser igual al peso de la pulpa.");
+            const isSizesValid = validateTotal(inputs.units, inputs.sizes, "La suma de los calibres debe ser igual a la cantidad de unidades analizadas.");
+    
+            if (!isWeightsValid || !isSizesValid) {
+                console.log("Preventing form submission.");
+                event.preventDefault();
+            }
+        });
+    
+        // Efficiently add event listeners to all relevant fields
+        [...inputs.colors, ...inputs.sizes, inputs.inshellWeight, inputs.shelledWeight].forEach(input => {
+            input.addEventListener('input', calculateYield);
+        });
+    });
+</script>
+    
+<div>
     <h2>Control de Calidad de Muestras</h2>
     <form method="POST" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
@@ -61,7 +117,8 @@
         <div class="form-group">
             {{ form.yieldpercentage.label(class="form-label") }}
             {{ form.yieldpercentage(class="form-control") }}
-        </div><br>
+        </div>
+        <br>
         <h3>Colores</h3>
         <div class="form-group">
             {{ form.extra_light.label(class="form-label") }}
@@ -152,26 +209,31 @@
         <div class="form-group">
             {{ form.active_fungus.label(class="form-label") }}
             {{ form.active_fungus(class="form-control") }}
-        </div><br>
+        </div>
+        <br>
         <h3>Imágenes de Calidad</h3>
-        <div class="form-group">
-            {{ form.inshell_image.label(class="form-label") }}
-            {{ form.inshell_image(class="form-control-file") }}
+        <div class="input-group mb-3">
+            {{ form.inshell_image.label(class="input-group-text") }}
+            {{ form.inshell_image(class="form-control") }}
             {% if form.inshell_image.errors %}
                 <div class="alert alert-danger">
                     {{ form.inshell_image.errors[0] }}
                 </div>
                 {% endif %}
-        <div class="form-group">
-            {{ form.shelled_image.label(class="form-label") }}
-            {{ form.shelled_image(class="form-control-file") }}
+        </div>
+        <div class="input-group mb-3">
+            {{ form.shelled_image.label(class="input-group-text") }}
+            {{ form.shelled_image }}
             {% if form.shelled_image.errors %}
                 <div class="alert alert-danger">
                     {{ form.shelled_image.errors[0] }}
                 </div>
             {% endif %}
-        </div><br>
-        <div>{{ form.submit(class="btn btn-primary") }}</div>
+        </div>
+        <br>
+        <div>
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
     </form>
 </div>
 <!-- Error Modal -->
