@@ -6,12 +6,12 @@
     </div>
     <br>
 
-    <div class="container">
-        <table class="table">
+    <div class="container text-center">
+        <table class="table table-striped">
             <thead>
               <tr>
-                <th scope="col">Productor</th>
-                <th scope="col">Muestra traida por</th>
+                <th class="col-sm-6">Productor</th>
+                <th class="col-sm-6">Muestra traida por</th>
               </tr>
             </thead>
             <tbody>
@@ -30,14 +30,14 @@
     </div>
     <br>
 
-    <div class="container">
-        <table class="table">
+    <div class="container text-center">
+        <table class="table table-striped">
             <thead>
               <tr>
-                <th scope="col">Analista</th>
-                <th scope="col">Fecha</th>
-                <th scope="col">Hora</th>
-                <th scope="col">Unidades</th>
+                <th class="col-sm-3">Analista</th>
+                <th class="col-sm-3">Fecha</th>
+                <th class="col-sm-3">Hora</th>
+                <th class="col-sm-3">Unidades</th>
               </tr>
             </thead>
             <tbody>
@@ -61,65 +61,65 @@
     <div class="container">
         <div class="row">
             <div class="col">
-                <table class="table">
+                <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th scope="col">Calibre</th>
-                            <th scope="col">Unidades</th>
+                            <th class="col-sm-6">Calibre</th>
+                            <th class="text-end col-sm-6">Unidades</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="table-group-divider">
                         <tr>
-                            <td>30/-</td>
-                            <td>{{ report.lessthan30 }}</td>
+                            <th class="row">30/-</th>
+                            <td class="text-end">{{ report.lessthan30 }}</td>
                         </tr>
                         <tr>
-                            <td>30/32</td>
-                            <td>{{ report.between3032 }}</td>
+                            <th class="row">30/32</th>
+                            <td class="text-end">{{ report.between3032 }}</td>
                         </tr>
                         <tr>
-                            <td>32/34</td>
-                            <td>{{ report.between3234 }}</td>
+                            <th class="row">32/34</th>
+                            <td class="text-end">{{ report.between3234 }}</td>
                         </tr>
                         <tr>
-                            <td>34/36</td>
-                            <td>{{ report.between3436 }}</td>
+                            <th class="row">34/36</th>
+                            <td class="text-end">{{ report.between3436 }}</td>
                         </tr>
                         <tr>
-                            <td>36/+</td>
-                            <td>{{ report.morethan36 }}</td>
+                            <th class="row">36/+</th>
+                            <td class="text-end">{{ report.morethan36 }}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <div class="col">
-                <table class="table">
+                <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th scope="col">Defecto Externo</th>
-                            <th scope="col">Unidades</th>
+                            <th class="col-sm-6">Defecto Externo</th>
+                            <th class="text-end col-sm-6">Unidades</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="table-group-divider">
                         <tr>
-                            <td>Cáscara Rota</td>
-                            <td>{{ report.broken_walnut }}</td>
+                            <th class="row">Cáscara Rota</th>
+                            <td class="text-end">{{ report.broken_walnut }}</td>
                         </tr>
                         <tr>
-                            <td>Casco Abierto</td>
-                            <td>{{ report.split_walnut }}</td>
+                            <th class="row">Casco Abierto</th>
+                            <td class="text-end">{{ report.split_walnut }}</td>
                         </tr>
                         <tr>
-                            <td>Mancha Leve</td>
-                            <td>{{ report.light_stain }}</td>
+                            <th class="row">Mancha Leve</th>
+                            <td class="text-end">{{ report.light_stain }}</td>
                         </tr>
                         <tr>
-                            <td>Mancha Grave</td>
-                            <td>{{ report.serious_stain }}</td>
+                            <th class="row">Mancha Grave</th>
+                            <td class="text-end">{{ report.serious_stain }}</td>
                         </tr>
                         <tr>
-                            <td>Pelón Adherido</td>
-                            <td>{{ report.adhered_hull }}</td>
+                            <th class="row">Pelón Adherido</th>
+                            <td class="text-end">{{ report.adhered_hull }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -137,81 +137,81 @@
     <div class="container">
         <div class="row">
             <div class="col">
-                <table class="table">
+                <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th scope="col">Item</th>
-                            <th scope="col">Peso (grs.)</th>
-                            <th scope="col">Porcentaje</th>
+                            <th class="col-sm-4">Item</th>
+                            <th class="text-end col-sm-4">Peso (grs.)</th>
+                            <th class="text-end col-sm-4">Porcentaje</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="table-group-divider">
                         <tr>
-                            <td>Peso con Cáscara</td>
-                            <td>{{ report.inshell_weight }}</td>
-                            <td>100%</td>
+                            <th class="row">Peso con Cáscara</th>
+                            <td class="text-end">{{ "{:0,.0f}".format(report.inshell_weight) }}</td>
+                            <td class="text-end">100.00%</td>
                         </tr>
                         <tr>
-                            <td>Peso de Pulpa</td>
-                            <td>{{ report.shelled_weight }}</td>
-                            <td>{{ report.yieldpercentage | round(2) }}%</td>
+                            <th class="row">Peso de Pulpa</th>
+                            <td class="text-end">{{ "{:0,.0f}".format(report.shelled_weight) }}</td>
+                            <td class="text-end">{{ report.yieldpercentage | round(2) }}%</td>
                         </tr>
                         <tr>
-                            <td>Extra Light</td>
-                            <td>{{ report.extra_light }}</td>
-                            <td>{{ (report.extra_light / report.shelled_weight * 100) | round(2) if report.shelled_weight != 0 else '0.00' }}%</td>
+                            <th class="row">Extra Light</th>
+                            <td class="text-end">{{ "{:0,.0f}".format(report.extra_light) }}</td>
+                            <td class="text-end">{{ (report.extra_light / report.shelled_weight * 100) | round(2) if report.shelled_weight != 0 else '0.00' }}%</td>
                         </tr>
                         <tr>
-                            <td>Light</td>
-                            <td>{{ report.light }}</td>
-                            <td>{{ (report.light / report.shelled_weight * 100) | round(2) if report.shelled_weight != 0 else '0.00' }}%</td>
+                            <th class="row">Light</th>
+                            <td class="text-end">{{ "{:0,.0f}".format(report.light) }}</td>
+                            <td class="text-end">{{ (report.light / report.shelled_weight * 100) | round(2) if report.shelled_weight != 0 else '0.00' }}%</td>
                         </tr>
                         <tr>
-                            <td>Light Amber</td>
-                            <td>{{ report.light_amber }}</td>
-                            <td>{{ (report.light_amber / report.shelled_weight * 100) | round(2) if report.shelled_weight != 0 else '0.00' }}%</td>
+                            <th class="row">Light Amber</th>
+                            <td class="text-end">{{ "{:0,.0f}".format(report.light_amber) }}</td>
+                            <td class="text-end">{{ (report.light_amber / report.shelled_weight * 100) | round(2) if report.shelled_weight != 0 else '0.00' }}%</td>
                         </tr>
                         <tr>
-                            <td>Amber</td>
-                            <td>{{ report.amber }}</td>
-                            <td>{{ (report.amber / report.shelled_weight * 100) | round(2) if report.shelled_weight != 0 else '0.00' }}%</td>
+                            <th class="row">Amber</th>
+                            <td class="text-end">{{ "{:0,.0f}".format(report.amber) }}</td>
+                            <td class="text-end">{{ (report.amber / report.shelled_weight * 100) | round(2) if report.shelled_weight != 0 else '0.00' }}%</td>
                         </tr>
                         <tr>
-                            <td>Amarilla</td>
-                            <td>{{ report.yellow }}</td>
-                            <td>{{ (report.yellow / report.shelled_weight * 100) | round(2) if report.shelled_weight != 0 else '0.00' }}%</td>
+                            <th class="row">Amarilla</th>
+                            <td class="text-end">{{ "{:0,.0f}".format(report.yellow) }}</td>
+                            <td class="text-end">{{ (report.yellow / report.shelled_weight * 100) | round(2) if report.shelled_weight != 0 else '0.00' }}%</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <div class="col">
-                <table class="table">
+                <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th scope="col">Defecto Interno</th>
-                            <th scope="col">Unidades</th>
+                            <th class="col">Defecto Interno</th>
+                            <th class="text-end" class="col">Unidades</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="table-group-divider">
                         <tr>
-                            <td>Reseca</td>
-                            <td>{{ report.shrivel }}</td>
+                            <th class="row">Reseca</th>
+                            <td class="text-end">{{ report.shrivel }}</td>
                         </tr>
                         <tr>
-                            <td>Vana</td>
-                            <td>{{ report.empty }}</td>
+                            <th class="row">Vana</th>
+                            <td class="text-end">{{ report.empty }}</td>
                         </tr>
                         <tr>
-                            <td>Daño de Insecto</td>
-                            <td>{{ report.insect_damage }}</td>
+                            <th class="row">Daño de Insecto</th>
+                            <td class="text-end">{{ report.insect_damage }}</td>
                         </tr>
                         <tr>
-                            <td>Hongo Inactivo</td>
-                            <td>{{ report.inactive_fungus }}</td>
+                            <th class="row">Hongo Inactivo</th>
+                            <td class="text-end">{{ report.inactive_fungus }}</td>
                         </tr>
                         <tr>
-                            <td>Hongo Activo</td>
-                            <td>{{ report.active_fungus }}</td>
+                            <th class="row">Hongo Activo</th>
+                            <td class="text-end">{{ report.active_fungus }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -220,14 +220,26 @@
     </div>
     <br>
     <br>
+
+    <div class="container text-center">
+        <h4>Foto Cáscara</h4>
+    </div>
+    <br>
+
     {% if report.inshell_image_path %}
-    <div class="container">
+    <div class="d-flex justify-content-center">
         <img src="{{ report.inshell_image_path }}" alt="Inshell Image" style="max-width: 100%; height: auto;">
     </div>
     {% endif %}
     <br>
+    <br>
+
+    <div class="container text-center">
+        <h4>Foto Pulpa</h4>
+    </div>
+    <br>
     {% if report.shelled_image_path %}
-    <div class="container">
+    <div class="d-flex justify-content-center">
         <img src="{{ report.shelled_image_path }}" alt="Shelled Image" style="max-width: 100%; height: auto;">
     </div>
     {% endif %}
