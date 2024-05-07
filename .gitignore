@@ -1,4 +1,6 @@
 __pycache__/
+instance/
+static/
 migrations/
 windows_venv/
 venv/
