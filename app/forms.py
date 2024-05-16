@@ -154,6 +154,7 @@ class LotQCForm(FlaskForm):
         
 class SampleQCForm(FlaskForm):
     grower = StringField('Productor', validators=[DataRequired(), Length(max=64)])
+    variety = StringField('Variedad', validators=[DataRequired(), Length(max=64)])
     brought_by = StringField('Muestra traida por', validators=[DataRequired(), Length(max=64)])
     analyst = StringField('Analista', validators=[DataRequired(), Length(max=64)])
     date = DateField('Fecha', validators=[DataRequired()], format='%Y-%m-%d')

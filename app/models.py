@@ -188,7 +188,8 @@ class LotQC(BaseModel):
 
 class SampleQC(BaseModel):
     __tablename__ = 'samplesqc'
-    grower = db.Column(db.String(64), unique=False, nullable=True)
+    grower = db.Column(db.String(64), unique=False, nullable=False)
+    variety = db.Column(db.String(64), unique=False, nullable=False)
     brought_by = db.Column(db.String(64), unique=False, nullable=True)
     analyst = db.Column(db.String(64), unique=False, nullable=True)
     date = db.Column(db.Date, default=date.today)

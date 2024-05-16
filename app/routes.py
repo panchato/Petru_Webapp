@@ -425,6 +425,7 @@ def create_sample_qc():
     if form.validate_on_submit():
         new_sample_qc = SampleQC(
             grower=form.grower.data,
+            variety=form.variety.data,
             brought_by=form.brought_by.data,
             analyst=form.analyst.data,
             date=form.date.data,
