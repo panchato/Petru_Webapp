@@ -5,18 +5,18 @@
         <table class="table table-striped">
             <thead>
                 <tr>
+                    <th>Fecha</th>
                     <th>Productor</th>
-                    <th>Date</th>
-                    <th>Analyst</th>
+                    <th>Variedad</th>
                     <th>Details</th>
                 </tr>
             </thead>
             <tbody>
             {% for record in sample_qc_records %}
                 <tr>
-                    <td>{{ record.grower }}</td>
                     <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
-                    <td>{{ record.analyst }}</td>
+                    <td>{{ record.grower }}</td>
+                    <td>{{ record.variety }}</td>
                     <td>
                         <a href="{{ url_for('view_sample_qc_report', report_id=record.id) }}" class="btn btn-primary btn-sm">Ver Análisis</a>
                     </td>
